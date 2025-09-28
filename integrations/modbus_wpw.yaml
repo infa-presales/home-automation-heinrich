@@ -53,8 +53,131 @@ input_number:
     min: 2
     max: 18
     step: 0.5
+  
+  wpw_g03_start_internal:
+    name: WPW G03 Start Internal
+    initial: 5
+    min: 1
+    max: 120
+    step: 1  
 
+  wpw_g04_delta_temp_set:
+    name: WPW G04 Delta Temp Set
+    initial: 5
+    min: 5
+    max: 30
+    step: 1
+
+input_select:
+  # Bestehende input_number Einträge...
+  
+  # Neue Input-Selects für textbasierte Parameter
+  wpw_p06_unit_mode:
+    name: "WPW P06 Unit Mode"
+    options:
+      - "DHW"
+      - "Heating"
+      - "Cooling" 
+      - "Heating+DHW"
+      - "Cooling+DHW"
+    icon: mdi:heat-pump
+
+  wpw_p07_fan_mode:
+    name: "WPW P07 FAN Mode"
+    options:
+      - "NOR"
+      - "ECO"
+      - "Night"
+      - "Hi-COP"
+    icon: mdi:fan
+
+  wpw_g02_pump_work:
+    name: "WPW G02 Pump Work"
+    options:
+      - "Interval"
+      - "Normal"
+      - "Demand"
+    icon: mdi:pump
+
+input_boolean:
+  # Bit-Steuerungen für Parameter Marker Definition (0x0032)
+  wpw_pmd_switch:
+    name: "WPW PMD Switch On/Off"
+  wpw_pmd_main_valve_selection:
+    name: "WPW PMD Main Valve Selection"
+  wpw_pmd_manual_frequency_selection:
+    name: "WPW PMD Manual Frequency Selection"
+  wpw_pmd_auxiliary_valve_initial_opening:
+    name: "WPW PMD Auxiliary Valve Initial Opening"
+  wpw_pmd_expansion_valve_initial_opening:
+    name: "WPW PMD Expansion Valve Initial Opening"
+
+# Automatisierungen für die neuen Parameter
 automation:
+  # Bestehende Automatisierungen...
+  
+  - alias: "Update Modbus wpw_p06_unit_mode"
+    description: "Sendet den geänderten Unit Mode an Modbus"
+    mode: single
+    trigger:
+      - trigger: state
+        entity_id: input_select.wpw_p06_unit_mode
+    action:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x36
+          value: >
+            {% set mode_map = {
+              "DHW": 0,
+              "Heating": 1,
+              "Cooling": 2,
+              "Heating+DHW": 3,
+              "Cooling+DHW": 4
+            } %}
+            {{ mode_map[states('input_select.wpw_p06_unit_mode')] }}
+
+  - alias: "Update Modbus wpw_p07_fan_mode"
+    description: "Sendet den geänderten Fan Mode an Modbus"
+    mode: single
+    trigger:
+      - trigger: state
+        entity_id: input_select.wpw_p07_fan_mode
+    action:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x190
+          value: >
+            {% set mode_map = {
+              "NOR": 0,
+              "ECO": 1,
+              "Night": 2,
+              "Hi-COP": 3
+            } %}
+            {{ mode_map[states('input_select.wpw_p07_fan_mode')] }}
+
+  - alias: "Update Modbus wpw_g02_pump_work"
+    description: "Sendet den geänderten Pump Work Mode an Modbus"
+    mode: single
+    trigger:
+      - trigger: state
+        entity_id: input_select.wpw_g02_pump_work
+    action:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x19E
+          value: >
+            {% set mode_map = {
+              "Interval": 0,
+              "Normal": 1,
+              "Demand": 2
+            } %}
+            {{ mode_map[states('input_select.wpw_g02_pump_work')] }}
   - alias: "Update Modbus wpwp01_heating_setp"
     description: "Sendet den geänderten Wert des Heating Setpoints an Modbus"
     mode: single
@@ -124,3 +247,57 @@ automation:
           slave: !secret wpw_modbus_slave
           address: 0xC8 #
           value: "{{ states('input_number.wpw_p05_temp_diff') | multiply(2) | int }}"
+
+  - alias: "Update Modbus wpw_g03_start_internal"
+    description: "Sendet den geänderten Wert des G03 Start Internal"
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: input_number.wpw_g03_start_internal
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x0185 #
+          value: "{{ states('input_number.wpw_g03_start_internal') | int }}"
+
+  - alias: "Update Modbus wpw_g04_delta_temp_set"
+    description: "Sendet den geänderten Wert des G04 Delta Temp"
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: input_number.wpw_g04_delta_temp_set
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x018D #
+          value: "{{ states('input_number.wpw_g04_delta_temp_set') | int }}"
+
+  # Schreibe gesamtes Register wenn sich ein Bit ändert
+  - alias: "Write Parameter Marker Definition Register"
+    description: "Schreibt alle Bits in PMD Register"
+    mode: single
+    trigger:
+      - trigger: state
+        entity_id:
+          - input_boolean.wpw_pmd_switch
+          - input_boolean.wpw_pmd_main_valve_selection
+          - input_boolean.wpw_pmd_manual_frequency_selection
+          - input_boolean.wpw_pmd_auxiliary_valve_initial_opening
+          - input_boolean.wpw_pmd_expansion_valve_initial_opening
+    action:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x32
+          value: >
+            {% set bit0 = 1 if is_state('input_boolean.wpw_pmd_switch', 'on') else 0 %}
+            {% set bit1 = 2 if is_state('input_boolean.wpw_pmd_main_valve_selection', 'on') else 0 %}
+            {% set bit2 = 4 if is_state('input_boolean.wpw_pmd_manual_frequency_selection', 'on') else 0 %}
+            {% set bit5 = 32 if is_state('input_boolean.wpw_pmd_auxiliary_valve_initial_opening', 'on') else 0 %}
+            {% set bit6 = 64 if is_state('input_boolean.wpw_pmd_expansion_valve_initial_opening', 'on') else 0 %}
+            {{ bit0 + bit1 + bit2 + bit5 + bit6 }}

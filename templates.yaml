@@ -58,3 +58,41 @@
       attributes:
         source: "sensor.pro3em_wp_wohnhaus_total_active_power"
         integration_method: "trapezoidal"
+
+# In templates/templates.yaml - am Ende der Datei hinzufügen
+- sensor:
+    - name: "WPW P06 Unit Mode Display"
+      unique_id: "wpw_p06_unit_mode_display"
+      state: >
+        {% set mode = states('sensor.wpw_p06_unit_mode') %}
+        {% set modes = {
+          '0': 'DHW (Nur Warmwasser)',
+          '1': 'Heating (Nur Heizen)',
+          '2': 'Cooling (Nur Kühlen)',
+          '3': 'Heating+DHW (Heizen + Warmwasser)',
+          '4': 'Cooling+DHW (Kühlen + Warmwasser)'
+        } %}
+        {{ modes.get(mode, 'Unbekannt: ' ~ mode) }}
+      
+    - name: "WPW P07 Fan Mode Display"
+      unique_id: "wpw_p07_fan_mode_display" 
+      state: >
+        {% set mode = states('sensor.wpw_p07_fan_mode') %}
+        {% set modes = {
+          '0': 'NOR (Normal/Turbo)',
+          '1': 'ECO (Energiesparmodus)',
+          '2': 'Night (Nachtmodus)',
+          '3': 'Hi-COP (Test)'
+        } %}
+        {{ modes.get(mode, 'Unbekannt: ' ~ mode) }}
+      
+    - name: "WPW G02 Pump Work Display"
+      unique_id: "wpw_g02_pump_work_display" 
+      state: >
+        {% set mode = states('sensor.wpw_g02_pump_work') %}
+        {% set modes = {
+          '0': 'Interval',
+          '1': 'Normal',
+          '2': 'Demand'
+        } %}
+        {{ modes.get(mode, 'Unbekannt: ' ~ mode) }}

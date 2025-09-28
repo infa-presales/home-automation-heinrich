@@ -814,7 +814,6 @@ mqtt:
       state_topic: "WP/status/Wohnhaus"
       value_template: "{{ value_json['CM2SmartGridWithOrWithoutElectricHeater']['value'] }}"
       unit_of_measurement: ""
-
   # number:
   #   - name: "WPW Start Timer Of Antilegionella"
   #     state_topic: "WP/status/Wohnhaus"

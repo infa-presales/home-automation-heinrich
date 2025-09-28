@@ -1,0 +1,520 @@
+views:
+  - title: Status Wohnhaus
+    sections:
+      - cards:
+          - type: vertical-stack
+            cards:
+              - show_name: true
+                show_icon: true
+                type: button
+                entity: switch.brennersperre
+                name: Brennersperre (Master)
+                icon: mdi:power
+                tap_action:
+                  action: toggle
+              - type: horizontal-stack
+                cards:
+                  - type: entity
+                    entity: switch.shellyplus1_brennersperre1
+                    name: Brennersperre1
+                  - type: entity
+                    entity: switch.shellyplus1_brennersperre2
+                    name: Brennersperre2
+          - type: custom:mini-graph-card
+            name: Kesseltemperatur & Brennerstatus(24h)
+            hours_to_show: 24
+            points_per_hour: 2
+            show:
+              legend: true
+              labels: true
+            graph: line
+            entities:
+              - entity: sensor.wpw_temperatur_kessel
+                name: Kessel °C
+                color: orange
+                y_axis: primary
+              - entity: sensor.wpw_temperatur_kessel_rl
+                name: Rücklauf °C
+                color: blue
+                y_axis: primary
+              - entity: sensor.olheizung_brennerstatus_numerisch
+                name: Brenner EIN/AUS
+                color: red
+                y_axis: secondary
+                show_line: true
+                show_points: false
+                smoothing: false
+          - title: Verlauf
+            type: history-graph
+            hours_to_show: 24
+            entities:
+              - entity: sensor.wpw_ambient_temperature
+              - entity: sensor.wpw_inlet_temperature
+              - entity: sensor.wpw_outlet_temperature
+              - entity: sensor.wpw_total_ac_power_consumption_shelly
+              - entity: sensor.wpw_eco_target_temperature
+              - entity: sensor.wpw_p03_temp_diff
+              - entity: sensor.wpw_energy_consumption_int
+              - entity: sensor.wpw_temperatur_kessel
+              - entity: sensor.wpw_temperatur_kessel_rl
+              - entity: sensor.olheizung_brennerstatus_numerisch
+              - entity: sensor.bg_total_active_power
+              - entity: sensor.bg_active_power_l1
+              - entity: sensor.bg_active_power_l2
+              - entity: sensor.bg_active_power_l3
+          - type: entities
+            title: Energieverbrauch (Shelly Int)
+            entities:
+              - entity: sensor.pro3em_wp_wohnhaus_total_active_energy
+              - entity: sensor.wpw_total_energy_consumption_hourly
+                name: Stundenverbrauch (kWh)
+              - entity: sensor.wpw_total_energy_consumption_daily
+                name: Tagesverbrauch (kWh)
+              - entity: sensor.wpw_total_energy_consumption_weekly
+                name: Wochenverbrauch (kWh)
+              - entity: sensor.wpw_total_energy_consumption_monthly
+                name: Monatsverbrauch (kWh)
+              - entity: sensor.wpw_total_energy_consumption_yearly
+                name: Jahresverbrauch (kWh)
+          - type: entities
+            title: Energieverbrauch (Template, trapazoid)
+            entities:
+              - entity: sensor.wpw_energy_consumption
+              - entity: sensor.wpw_hourly_energy_consumption
+                name: Stundenverbrauch (kWh)
+              - entity: sensor.wpw_daily_energy_consumption
+                name: Tagesverbrauch (kWh)
+              - entity: sensor.wpw_weekly_energy_consumption
+                name: Wochenverbrauch (kWh)
+              - entity: sensor.wpw_monthly_energy_consumption
+                name: Monatsverbrauch (kWh)
+              - entity: sensor.wpw_yearly_energy_consumption
+                name: Jahresverbrauch (kWh)
+      - type: grid
+        cards:
+          - type: entities
+            entities:
+              - entity: sensor.wpw_effective_target_temperature
+              - entity: sensor.wpw_p01_heating_setp
+              - entity: sensor.wpw_eco_target_temperature
+            title: Target
+          - type: heading
+            heading: Overview (Read-only)
+            heading_style: title
+          - type: entities
+            entities:
+              - entity: sensor.wpw_total_ac_power_consumption_shelly
+              - entity: sensor.wpw_heating_capacity
+              - entity: sensor.wpw_cop
+              - entity: sensor.wpw_pump_flow
+              - entity: sensor.wpw_heatflow
+              - entity: sensor.wpw_dc_pump_speed
+              - entity: sensor.wpw_compressor_frequency
+              - entity: sensor.wpw_ac_voltage
+              - entity: sensor.wpw_ac_current
+              - entity: sensor.wpw_ac_power_computed
+              - entity: sensor.wpw_dc_fan_target
+              - entity: sensor.wpw_dc_fan1_speed
+              - entity: sensor.wpw_dc_fan1_speed_2
+            title: Overview (Read-only)
+          - type: entities
+            entities:
+              - entity: sensor.wpw_ambient_temperature
+              - entity: sensor.wpw_inlet_temperature
+              - entity: sensor.wpw_outlet_temperature
+              - entity: sensor.wpw_delta_t
+              - entity: sensor.wpw_heatflow
+              - entity: sensor.wpw_exhaust_temperature
+              - entity: sensor.wpw_evaporation_temperature
+              - entity: sensor.wpw_coil_temperature
+              - entity: sensor.wpw_condensation_temperature
+              - entity: sensor.wpw_return_gas_temperature
+              - entity: sensor.wpw_suct_pressure
+              - entity: sensor.wpw_disch_pressure
+              - entity: sensor.wpw_eev1_step
+              - entity: sensor.wpw_eev2_step
+            title: Temp / Press (Read-only)
+      - type: grid
+        cards:
+          - type: heading
+            heading: Output Symbols
+            heading_style: title
+          - type: entities
+            entities:
+              - entity: sensor.wpw_output_symbol1_compressor_status
+              - entity: sensor.wpw_output_symbol1_switch_off
+              - entity: sensor.wpw_output_symbol1_fan_status
+              - entity: sensor.wpw_output_symbol1_4way_valve_status
+              - entity: sensor.wpw_output_symbol1_high_low_wind_status
+            title: Output Symbol 1
+          - type: entities
+            entities:
+              - entity: sensor.wpw_output_symbol2_chassis_electric_heating_status
+              - entity: sensor.wpw_output_symbol2_heating_heater_status
+              - entity: sensor.wpw_output_symbol2_three_valve_status
+              - entity: sensor.wpw_output_symbol2_hotwater_heater_status
+            title: Output Symbol 2
+          - type: entities
+            entities:
+              - entity: sensor.wpw_output_symbol3_end_pump_status
+              - entity: sensor.wpw_output_symbol3_crank_heater_status
+              - entity: sensor.wpw_output_symbol3_enhanced_enthalpy_status
+              - entity: sensor.wpw_output_symbol3_waterpump_status
+            title: Output Symbol 3
+      - type: grid
+        cards:
+          - type: heading
+            heading: Status
+            heading_style: title
+          - type: entities
+            entities:
+              - entity: sensor.wpw_switching_input_end_linkage
+              - entity: sensor.wpw_switching_input_emergency
+              - entity: sensor.wpw_switching_input_heating_control
+              - entity: sensor.wpw_switching_input_cooling_control
+              - entity: sensor.wpw_switching_input_water_flow
+              - entity: sensor.wpw_switching_input_high_voltage
+              - entity: sensor.wpw_switchinginputphasesequence
+              - entity: sensor.wpw_switching_input_grid_sg_signal
+              - entity: sensor.wpw_switching_input_grid_euv_signal
+            title: Switching Input
+          - type: entities
+            entities:
+              - entity: sensor.wpw_workingstatus_hotwater_demand
+              - entity: sensor.wpw_workingstatus_heating_demand
+              - entity: sensor.wpw_workingstatus_with_or_without_heating
+              - entity: sensor.wpw_workingstatus_with_or_without_cooling
+              - entity: sensor.wpw_workingstatus_antilegionella_on
+              - entity: sensor.wpw_workingstatus_cooling_demand
+              - entity: sensor.wpw_workingstatus_alarm_stop
+              - entity: sensor.wpw_workingstatus_defrost
+            title: Working Status
+          - type: entities
+            entities:
+              - entity: sensor.shellyplus1pm_oelheizung_switch_0_power
+                name: Leistungsaufnahme
+              - entity: sensor.shellyplus1pm_oelheizung_switch_0_energy
+                name: Energie (summiert)
+              - entity: sensor.shellyplus1pm_oelheizung_switch_0_voltage
+                name: Spannung
+              - entity: sensor.shellyplus1pm_oelheizung_switch_0_current
+                name: Strom
+              - entity: sensor.shellyplus1pm_oelheizung_uptime
+                name: Uptime
+              - entity: sensor.shellyplus1pm_oelheizung_rssi
+                name: WLAN Empfang (RSSI)
+              - entity: sensor.olheizung_brennerstatus_numerisch
+              - entity: sensor.olheizung_brennerstatus_text
+            title: Ölheizung
+      - type: grid
+        cards:
+          - type: heading
+            heading: Input
+            heading_style: title
+      - type: grid
+        cards:
+          - type: heading
+            heading: Neuer Abschnitt
+    badges:
+      - type: entity
+        show_name: true
+        show_state: true
+        show_icon: true
+        entity: sensor.system_monitor_massenspeicher_auslastung
+        color: ''
+        name: Disk Usage
+      - type: entity
+        show_name: true
+        show_state: true
+        show_icon: true
+        entity: sensor.wpw_temperatur_kessel
+        name: Kesseltemperatur
+        icon: mdi:thermometer
+        show_entity_picture: true
+      - type: entity
+        show_name: true
+        show_state: true
+        show_icon: true
+        entity: sensor.wpw_timestamp
+        color: ''
+        name: Letzter Modbus update
+      - type: entity
+        show_name: true
+        show_state: true
+        show_icon: true
+        entity: sensor.wpw_energy_consumption
+        name: Gesamtverbrauch
+      - type: entity
+        entity: sensor.wpw_shelly_timestamp
+    type: sections
+    max_columns: 4
+    cards: []
+  - type: sections
+    max_columns: 4
+    title: Project Parm
+    path: project-parm
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            icon: ''
+            heading: Zielparameter
+            heading_style: title
+          - type: entities
+            entities:
+              - entity: sensor.wpw_p01_heating_setp
+                secondary_information: Target temperature for heating 10-55°C in 0,5K Schritten
+              - entity: sensor.wpw_p02_cooling_setp
+              - entity: sensor.wpw_p03_temp_diff
+              - entity: sensor.wpw_p04_hotwater_setp
+              - entity: sensor.wpw_p05_temp_diff
+              - entity: sensor.wpw_p06_unit_mode
+              - entity: sensor.wpw_p06_unit_mode_display
+              - entity: sensor.wpw_p07_fan_mode
+              - entity: sensor.wpw_p07_fan_mode_display
+            title: Aktuelle Zielparameter
+          - type: entities
+            entities:
+              - entity: input_number.wpw_p01_heating_setp
+                name: WPW P01 Heating Setp
+                secondary_info: Target temperature Heating 10..55°C in 0.5K steps
+              - entity: input_number.wpw_p02_cooling_setp
+                name: WPW P02 Cooling Setp
+                secondary_info: Target temperature Cooling 12..30°C in 0.5K steps
+              - entity: input_number.wpw_p03_temp_diff
+                secondary_info: Target temperature Heating 10..55°C in 0.5K steps
+              - entity: input_number.wpw_p04_hotwater_setp
+                secondary_info: Target temperature Heating 10..55°C in 0.5K steps
+              - entity: input_number.wpw_p05_temp_diff
+                secondary_info: Target temperature Heating 10..55°C in 0.5K steps
+              - entity: input_select.wpw_p06_unit_mode
+                secondary_info: Target temperature Heating 10..55°C in 0.5K steps
+              - entity: input_select.wpw_p07_fan_mode
+                secondary_info: Target temperature Heating 10..55°C in 0.5K steps
+            title: Zielparameter Ändern
+          - type: entities
+            entities:
+              - entity: sensor.mb_wpw_cop
+            title: MB WPW
+      - type: grid
+        cards:
+          - type: heading
+            icon: ''
+            heading: Projektparameter
+            heading_style: title
+          - type: entities
+            title: Project Parm
+            entities:
+              - entity: sensor.wpw_g02_pump_work
+              - entity: sensor.wpw_g02_pump_work_display
+              - entity: sensor.wpw_g03_start_internal
+              - entity: sensor.wpw_g04_delta_temp_set
+              - entity: sensor.wpw_g05_heating_heater_ext
+              - entity: sensor.wpw_g06_comp_delay
+              - entity: sensor.wpw_g07_hotwater_heater_ext
+              - entity: sensor.wpw_g08_comp_delay
+              - entity: sensor.wpw_g09_enable_switch
+              - entity: sensor.wpw_g10_ambtemp_switch_setp
+              - entity: sensor.wpw_g11_ambtemp_diff
+          - type: entities
+            entities:
+              - entity: input_select.wpw_g02_pump_work
+                secondary_info: Target temperature Heating 10..55°C in 0.5K steps
+              - entity: input_number.wpw_g03_start_internal
+              - entity: input_number.wpw_g04_delta_temp_set
+            title: Projekt Parameter Ändern
+      - type: grid
+        cards:
+          - type: heading
+            heading: Control Mark Coils
+            heading_style: title
+          - type: entities
+            entities:
+              - entity: sensor.wpw_cm1_cooling_auxiliary_circuit_enable
+              - entity: sensor.wpw_cm1_auxiliary_expansion_valve_mode
+              - entity: sensor.wpw_cm1_dc_fan1_selection
+              - entity: sensor.wpw_cm1_dc_fan2_selection
+              - entity: sensor.wpw_cm1_lockout_fault_reset_selection
+              - entity: sensor.wpw_cm1_parameter_reset_selection
+              - entity: sensor.wpw_cm1_pressure_sensor_valid
+              - entity: sensor.wpw_cm1_thermostatic_adjustment
+            title: Control Mark 1
+          - type: entities
+            entities:
+              - entity: sensor.wpw_cm2_forced_defrost
+              - entity: sensor.wpw_cm2_load_fast_check_mode
+              - entity: sensor.wpw_cm2_smart_grid_with_or_without_electric_heater
+              - entity: sensor.wpw_cm2_whether_the_clock_is_at_night
+              - entity: sensor.wpw_cm2_with_or_without_antilegionella
+              - entity: sensor.wpw_cm2_with_or_without_hot_water
+              - entity: sensor.wpw_cm2_with_or_without_smart_grid
+            title: Control Mark 2
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:fridge
+            heading: Parameter Marker Definition
+            heading_style: title
+          - type: entities
+            entities:
+              - entity: sensor.wpw_pmd_switch
+              - entity: sensor.wpw_pmd_main_valve_selection
+              - entity: sensor.wpw_pmd_manual_frequency_selection
+              - entity: sensor.wpw_pmd_auxiliary_valve_initial_opening_selection
+              - entity: sensor.wpw_pmd_expansion_valve_initial_opening_selection
+            title: Actual PMD Values
+          - type: entities
+            title: Demanded Parameter Marker Definition
+            entities:
+              - entity: input_boolean.wpw_pmd_switch
+              - entity: input_boolean.wpw_pmd_main_valve_selection
+              - entity: input_boolean.wpw_pmd_manual_frequency_selection
+              - entity: input_boolean.wpw_pmd_auxiliary_valve_initial_opening
+              - entity: input_boolean.wpw_pmd_expansion_valve_initial_opening
+    badges:
+      - type: entity
+        show_name: true
+        show_state: true
+        show_icon: true
+        entity: sensor.wpw_timestamp
+        color: ''
+        name: Letzter Modbus update
+  - type: sections
+    max_columns: 4
+    title: Eco
+    path: eco
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Neuer Abschnitt
+          - type: entities
+            entities:
+              - entity: sensor.wpw_e01_economic_heat_ambi1
+              - entity: sensor.wpw_e05_economic_water_ambi1
+              - entity: sensor.wpw_e09_economic_cool_ambi1
+              - entity: sensor.wpw_e13_economic_heat_ambi1
+              - entity: sensor.wpw_e17_economic_water_temp1
+              - entity: sensor.wpw_e21_economic_cool_temp1
+            title: Eco 1
+      - type: grid
+        cards:
+          - type: heading
+            heading: Neuer Abschnitt
+          - type: entities
+            entities:
+              - entity: sensor.wpw_e02_economic_heat_ambi2
+              - entity: sensor.wpw_e06_economic_water_ambi2
+              - entity: sensor.wpw_e10_economic_cool_ambi2
+              - entity: sensor.wpw_e14_economic_heat_ambi2
+              - entity: sensor.wpw_e18_economic_water_temp2
+              - entity: sensor.wpw_e22_economic_cool_temp2
+            title: Eco 2
+      - type: grid
+        cards:
+          - type: heading
+            heading: Neuer Abschnitt
+          - type: entities
+            entities:
+              - entity: sensor.wpw_e03_economic_heat_ambi3
+              - entity: sensor.wpw_e07_economic_water_ambi3
+              - entity: sensor.wpw_e11_economic_cool_ambi3
+              - entity: sensor.wpw_e15_economic_heat_ambi3
+              - entity: sensor.wpw_e19_economic_water_temp3
+              - entity: sensor.wpw_e23_economic_cool_temp3
+            title: Eco 3
+      - type: grid
+        cards:
+          - type: heading
+            heading: Neuer Abschnitt
+          - type: entities
+            entities:
+              - entity: sensor.wpw_e04_economic_heat_ambi4
+              - entity: sensor.wpw_e08_economic_water_ambi4
+              - entity: sensor.wpw_e12_economic_cool_ambi4
+              - entity: sensor.wpw_e16_economic_heat_ambi4
+              - entity: sensor.wpw_e20_economic_water_temp4
+              - entity: sensor.wpw_e24_economic_cool_temp4
+            title: Eco 4
+      - type: grid
+        cards:
+          - type: heading
+            heading: Neuer Abschnitt
+          - type: entities
+            entities:
+              - entity: input_number.wpw_tt1
+              - entity: input_number.wpw_m
+      - type: grid
+        cards:
+          - type: heading
+            heading: Neuer Abschnitt
+          - type: entities
+            entities:
+              - entity: sensor.wpw_heizkurve_t1_15degc
+              - entity: sensor.wpw_heizkurve_t2_5degc
+              - entity: sensor.wpw_heizkurve_t3_7degc
+              - entity: sensor.wpw_heizkurve_t4_17degc
+  - type: sections
+    max_columns: 4
+    title: Fehler Status
+    path: fehler-status
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Neuer Abschnitt
+          - type: entities
+            entities:
+              - entity: sensor.wpw_fs1_ambient_temp
+              - entity: sensor.wpw_fs1_coil_temp
+              - entity: sensor.wpw_fs1_high_voltage_fault
+              - entity: sensor.wpw_fs1_hotwater_temp
+              - entity: sensor.wpw_fs1_outlet_temp
+              - entity: sensor.wpw_fs1_powerfailure
+            title: Fehler Status 1
+          - type: entities
+            entities:
+              - entity: sensor.wpw_fs2_high_protection_of_heatung_water_outlet
+              - entity: sensor.wpw_fs2_water_flow_switch_failure
+            title: Fehler Status 2
+          - type: entities
+            entities:
+              - entity: sensor.wpw_fs3_outlet_gas_temp_failure
+            title: Fehler Status 3
+      - type: grid
+        cards:
+          - type: heading
+            heading: Neuer Abschnitt
+          - type: entities
+            entities:
+              - entity: sensor.wpw_fs4_economy_into_temperature_sensor_failure
+              - entity: sensor.wpw_fs4_economy_out_temperature_sensor_failure
+              - entity: sensor.wpw_fs4_high_exhaust_temperature_protection
+              - entity: sensor.wpw_fs4_overcooling_protection_ofcooling_outlet_water
+              - entity: sensor.wpw_fs4_return_air_temperature_sensor_failure
+              - entity: sensor.wpw_fs4_water_inlet_temp_sensor_failure
+            title: Fehler Status 4
+          - type: entities
+            entities:
+              - entity: sensor.wpw_fs5_high_pressure_sensor_failure
+              - entity: sensor.wpw_fs5_high_protection_of_coil_temperature
+              - entity: sensor.wpw_fs5_low_pressure_sensor_failure
+              - entity: sensor.wpw_fs5_overpressure_protection_of_high_pressure
+              - entity: sensor.wpw_fs5_underpressure_protection_of_low_pressure
+            title: Fehler Status 5
+      - type: grid
+        cards:
+          - type: heading
+            heading: Neuer Abschnitt
+          - type: entities
+            entities:
+              - entity: sensor.wpw_fs6_primary_antifreeze
+              - entity: sensor.wpw_fs6_secondary_antifreeze
+            title: Fehler Status 6
+          - type: entities
+            entities:
+              - entity: sensor.wpw_fs7_dc_fan1_fault
+              - entity: sensor.wpw_fs7_dc_fan2_fault
+              - entity: sensor.wpw_fs7_inverter_module_communication_failure
+              - entity: sensor.wpw_fs7_low_ring_temperature
+            title: Fehler Status 7
