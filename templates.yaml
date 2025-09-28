@@ -1,0 +1,60 @@
+- sensor:
+    # Stromzähler Keller Verbrauch
+    - name: "PV Gesamtleistung"
+      unique_id: "pv_gesamtleistung"
+      unit_of_measurement: "W"
+      device_class: "power"
+      state_class: "measurement"
+      state: >-
+        {{ float(states('sensor.total_dc_power')) + 
+           float(states('sensor.sgx_total_dc_power')) + 
+           float(states('sensor.plenticoreplus10_solar_ac_power'))
+         }}
+
+    - name: Kostal Tagesertrag # Obsolete in future!
+      unique_id: kostal_tagesertrag
+      unit_of_measurement: "kWh"
+      device_class: "energy"
+      state_class: "total"
+      state: >-
+        {{ float(states('sensor.plenticoreplus10_solar_energy_pv1_day')) + 
+           float(states('sensor.plenticoreplus10_solar_energy_pv2_day'))  
+         }}
+      attributes:
+        last_reset: "{{ now().replace(hour=0, minute=0, second=0, microsecond=0) }}"
+
+    - name: "SH10RT PV Leistung"
+      unique_id: "sh10rt_pv_leistung"
+      unit_of_measurement: "W"
+      device_class: "power"
+      state_class: "measurement"
+      state: >-
+        {{  float(states('sensor.sgx_total_dc_power')) }}
+
+    - name: "SG10RT PV Leistung"
+      unique_id: "sg10rt_pv_leistung"
+      unit_of_measurement: "W"
+      device_class: "power"
+      state_class: "measurement"
+      state: >-
+        {{  float(states('sensor.total_dc_power')) }}
+
+    - name: "KOSTAL PV Leistung"
+      unique_id: "kostal_pv_leistung"
+      unit_of_measurement: "W"
+      device_class: "power"
+      state_class: "measurement"
+      state: >-
+        {{  float(states('sensor.plenticoreplus10_solar_ac_power')) }}
+
+    # WPW
+    - name: "WPW Energy Consumption"
+      unique_id: "wpw_energy_consumption"
+      unit_of_measurement: "kWh"
+      device_class: energy
+      state_class: total_increasing
+      state: >
+        {{ states('sensor.pro3em_wp_wohnhaus_total_active_power') | float * 0.001 / 3600 }}
+      attributes:
+        source: "sensor.pro3em_wp_wohnhaus_total_active_power"
+        integration_method: "trapezoidal"

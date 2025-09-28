@@ -1,0 +1,76 @@
+kostal_tagesertrag_energy_um:
+  source: sensor.kostal_pv_leistung # Leistungssensor in Watt
+  cycle: daily # Täglicher Reset
+  name: Kostal Tagesertrag  UM
+
+sh10rt_tagesertrag_energy_um:
+  source: sensor.sh10rt_pv_leistung # Leistungssensor in Watt
+  cycle: daily # Täglicher Reset
+  name: SH10RT Tagesertrag  UM
+
+sg10rt_tagesertrag_energy_um:
+  source: sensor.sg10rt_pv_leistung # Leistungssensor in Watt
+  cycle: daily # Täglicher Reset
+  name: SG10RT Tagesertrag  UM
+
+#  WP Wohnhaus
+wpw_total_active_energy_hourly:
+  name: "WPW Total Energy Consumption hourly"
+  unique_id: wpw_total_active_energy_hourly
+  source: sensor.pro3em_wp_wohnhaus_total_active_energy
+  cycle: hourly
+
+wpw_total_active_energy_daily:
+  name: "WPW Total Energy Consumption daily"
+  unique_id: wpw_total_active_energy_daily
+  source: sensor.pro3em_wp_wohnhaus_total_active_energy
+  cycle: daily
+
+wpw_total_active_energy_weekly:
+  name: "WPW Total Energy Consumption weekly"
+  unique_id: wpw_total_active_energy_weekly
+  source: sensor.pro3em_wp_wohnhaus_total_active_energy
+  cycle: weekly
+
+wpw_total_active_energy_monthly:
+  name: "WPW Total Energy Consumption monthly"
+  unique_id: wpw_total_active_energy_monthly
+  source: sensor.pro3em_wp_wohnhaus_total_active_energy
+  cycle: monthly
+
+wpw_total_active_energy_yearly:
+  name: "WPW Total Energy Consumption yearly"
+  unique_id: wp_total_active_energy_yearly
+  source: sensor.pro3em_wp_wohnhaus_total_active_energy
+  cycle: yearly
+
+################################
+wpw_hourly_energy:
+  name: "WPW Hourly Energy Consumption"
+  unique_id: wpw_hourly_energy
+  source: sensor.wpw_energy_consumption
+  cycle: hourly
+
+wpw_daily_energy:
+  name: "WPW Daily Energy Consumption"
+  unique_id: wpw_daily_energy
+  source: sensor.wpw_energy_consumption
+  cycle: daily
+
+wpw_weekly_energy:
+  name: "WPW Weekly Energy Consumption"
+  unique_id: wpw_weekly_energy
+  source: sensor.wpw_energy_consumption
+  cycle: weekly
+
+wpw_monthly_energy:
+  name: "WPW Monthly Energy Consumption"
+  unique_id: wpw_monthly_energy
+  source: sensor.wpw_energy_consumption
+  cycle: monthly
+
+wpw_yearly_energy:
+  name: "WPW Yearly Energy Consumption"
+  unique_id: wpw_yearly_energy
+  source: sensor.wpw_energy_consumption
+  cycle: yearly

@@ -1,0 +1,19 @@
+influxdb:
+  host: 192.168.178.56              # Beispiel: '192.168.1.100'
+  port: 8086                       # Standardport von InfluxDB
+  database: home_assistant         # Name der Datenbank in InfluxDB
+#  username: <dein_username>        # Benutzername (falls konfiguriert)
+#  password: <dein_passwort>        # Passwort (falls konfiguriert)
+  max_retries: 3                   # Anzahl der Wiederholungen bei Verbindungsfehlern
+  default_measurement: state       # Standard-Messung für Zustände
+  measurement_attr: entity_id
+  exclude:
+    entity_globs:
+      - switch.*
+      - todo.*
+      - tts.*
+      - update.*
+      - device_tracker.*
+      - lock.*
+      - device_tracker.*
+      - media_player.*

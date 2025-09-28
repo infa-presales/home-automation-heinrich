@@ -1,0 +1,115 @@
+modbus:
+  - name: SungrowSGx
+    type: tcp
+    host: !secret sungrow_modbus_host2_ip
+    port: !secret sungrow_modbus_port2
+    delay: 5
+    timeout: 10
+
+    sensors:
+      - name: SGx Daily power yields
+        unique_id: sgx_daily_power_yields
+        device_address: !secret sungrow_modbus_slave2
+        address: 5002 # reg 5003
+        input_type: input
+        data_type: uint16
+        precision: 1
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total
+        scale: 0.1
+        scan_interval: 10
+
+      - name: SGx Total power yields
+        unique_id: sgx_total_power_yields
+        device_address: !secret sungrow_modbus_slave2
+        address: 5003 # reg 5004-5005
+        input_type: input
+        data_type: uint32
+        swap: word
+        precision: 1
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total
+        scale: 1
+        scan_interval: 10
+
+      - name: SGx Inverter temperature
+        unique_id: sgx_inverter_temperature
+        device_address: !secret sungrow_modbus_slave2
+        address: 5007 # reg 5008
+        input_type: input
+        data_type: int16
+        precision: 1
+        unit_of_measurement: °C
+        device_class: Temperature
+        state_class: measurement
+        scale: 0.1
+        scan_interval: 10
+
+      - name: SGx Total DC power
+        unique_id: sgx_total_dc_power
+        device_address: !secret sungrow_modbus_slave2
+        address: 5016 # reg 5017
+        input_type: input
+        data_type: uint32
+        swap: word
+        precision: 0
+        unit_of_measurement: W
+        device_class: power
+        state_class: measurement
+        scale: 1
+        scan_interval: 10
+
+      - name: SGx MPPT1 Voltage
+        unique_id: sgx_mppt1_voltage
+        device_address: !secret sungrow_modbus_slave2
+        address: 5010 # reg 5008
+        input_type: input
+        data_type: int16
+        precision: 1
+        unit_of_measurement: V
+        device_class: Voltage
+        state_class: measurement
+        scale: 0.1
+        scan_interval: 10
+
+      - name: SGx MPPT1 Current
+        unique_id: sgx_mppt1_current
+        device_address: !secret sungrow_modbus_slave2
+        address: 5011 # reg 5008
+        input_type: input
+        data_type: int16
+        precision: 1
+        unit_of_measurement: A
+        device_class: Current
+        state_class: measurement
+        scale: 0.1
+        scan_interval: 10
+
+      - name: SGx MPPT2 Voltage
+        unique_id: sgx_mppt2_voltage
+        device_address: !secret sungrow_modbus_slave2
+        address: 5012 # reg 5008
+        input_type: input
+        data_type: int16
+        precision: 1
+        unit_of_measurement: V
+        device_class: Voltage
+        state_class: measurement
+        scale: 0.1
+        scan_interval: 10
+
+      - name: SGx MPPT2 Current
+        unique_id: sgx_mppt2_current
+        device_address: !secret sungrow_modbus_slave2
+        address: 5013 # reg 5008
+        input_type: input
+        data_type: int16
+        precision: 1
+        unit_of_measurement: A
+        device_class: Current
+        state_class: measurement
+        scale: 0.1
+        scan_interval: 10
+

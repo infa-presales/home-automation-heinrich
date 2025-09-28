@@ -1,0 +1,20 @@
+sensor.shm_energy_supply:
+  device_class: energy
+  unit_of_measurement: "kWh"
+sensor.shm_energy_consumption:
+  device_class: energy
+  unit_of_measurement: "kWh"
+sensor.daily_pv_generation:
+  friendly_name: SH10RT Tagesertrag
+sensor.sgx_total_power_yields:
+  friendly_name: SG10RT Tagesertrag
+#sensor.plenticoreplus10_solar_energy_pv1_day:
+#  friendly_name: Kostal Tagesertrag
+sensor.daily_battery_discharge:
+  friendly_name: Batterie Tagesentnahme
+sensor.daily_battery_charge:
+  friendly_name: Batterie Tagesladung
+sensor.daily_imported_energy:
+  friendly_name: Tagesverbrauch
+sensor.daily_exported_energy:
+  friendly_name: Tageseinspeisung
