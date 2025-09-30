@@ -94,9 +94,7 @@ views:
         cards:
           - type: entities
             entities:
-              - entity: sensor.wpw_effective_target_temperature
               - entity: sensor.wpw_p01_heating_setp
-              - entity: sensor.wpw_eco_target_temperature
             title: Target
           - type: heading
             heading: Overview (Read-only)
@@ -115,7 +113,8 @@ views:
               - entity: sensor.wpw_ac_power_computed
               - entity: sensor.wpw_dc_fan_target
               - entity: sensor.wpw_dc_fan1_speed
-              - entity: sensor.wpw_dc_fan1_speed_2
+              - entity: sensor.wpw_dc_fan2_speed
+                name: WPW DC Fan2 Speed
             title: Overview (Read-only)
           - type: entities
             entities:
@@ -208,13 +207,24 @@ views:
             title: Ölheizung
       - type: grid
         cards:
-          - type: heading
-            heading: Input
-            heading_style: title
-      - type: grid
-        cards:
-          - type: heading
-            heading: Neuer Abschnitt
+          - title: Verlauf
+            type: history-graph
+            hours_to_show: 43
+            entities:
+              - entity: sensor.wpw_ambient_temperature
+              - entity: sensor.wpw_inlet_temperature
+              - entity: sensor.wpw_outlet_temperature
+              - entity: sensor.wpw_delta_t
+              - entity: sensor.wpw_exhaust_temperature
+              - entity: sensor.wpw_evaporation_temperature
+              - entity: sensor.wpw_coil_temperature
+              - entity: sensor.wpw_condensation_temperature
+              - entity: sensor.wpw_return_gas_temperature
+              - entity: sensor.wpw_suct_pressure
+              - entity: sensor.wpw_disch_pressure
+            grid_options:
+              columns: full
+        column_span: 4
     badges:
       - type: entity
         show_name: true

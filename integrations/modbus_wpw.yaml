@@ -38,7 +38,7 @@ input_number:
     initial: 2
     min: 2
     max: 18
-    step: 0.5
+    step: 1
 
   wpw_p04_hotwater_setp:
     name: "WPW P04 Hotwater Setp"
@@ -52,7 +52,7 @@ input_number:
     initial: 2
     min: 2
     max: 18
-    step: 0.5
+    step: 1
   
   wpw_g03_start_internal:
     name: WPW G03 Start Internal
@@ -246,7 +246,7 @@ automation:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
           address: 0xC8 #
-          value: "{{ states('input_number.wpw_p05_temp_diff') | multiply(2) | int }}"
+          value: "{{ states('input_number.wpw_p05_temp_diff')  }}"
 
   - alias: "Update Modbus wpw_g03_start_internal"
     description: "Sendet den geänderten Wert des G03 Start Internal"
