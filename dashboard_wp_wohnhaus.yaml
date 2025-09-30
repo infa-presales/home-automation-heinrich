@@ -8,7 +8,7 @@ views:
                 show_icon: true
                 type: button
                 entity: switch.brennersperre
-                name: Brennersperre (Master)
+                name: Brenner (Master)
                 icon: mdi:power
                 tap_action:
                   action: toggle
@@ -16,10 +16,10 @@ views:
                 cards:
                   - type: entity
                     entity: switch.shellyplus1_brennersperre1
-                    name: Brennersperre1
+                    name: Brenner Control1
                   - type: entity
                     entity: switch.shellyplus1_brennersperre2
-                    name: Brennersperre2
+                    name: Brenner Control2
           - type: custom:mini-graph-card
             name: Kesseltemperatur & Brennerstatus(24h)
             hours_to_show: 24
