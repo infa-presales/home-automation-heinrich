@@ -14,8 +14,8 @@ mqtt:
   sensor:
     - name: "WPW Debug Raw Message"
       state_topic: "WP/status/Wohnhaus"
-      value_template: "{{ value }}"    
-      
+      value_template: "{{ value }}"
+
     - name: "Ölheizung Brennerstatus (Text)"
       state_topic: "SmartHome/Keller/TEMP_KESSEL/tele/SENSOR"
       value_template: "{{ value_json.Switch1 }}"
@@ -32,8 +32,7 @@ mqtt:
       icon: mdi:fire
     #      unit_of_measurement: "1/0)"
     #      device_class: power
-
-      # Also get Shelly data
+    # Also get Shelly data
     - name: "WPW Total AC Power Consumption (Shelly)"
       state_topic: "SmartHome/Wohnhaus/Shelly-WP-Wohnhaus/events/rpc"
       value_template: "{{ value_json['params']['em:0']['total_act_power'] | round(0) }}"
@@ -925,3 +924,85 @@ mqtt:
   #     max: 2
   #     step: 1
 
+#  {% if  is_number(states('sensor.wpw_cop' ) ) and (states('sensor.wpw_cop' ) ) | float > -1 %}
+#            {{ states('sensor.wpw_cop') | float }}
+#          {% else %}
+#            {{ none }}
+#            {% endif %}
+
+# Hier starten die Template Sesoren
+sensor:
+  - platform: template
+    sensors:
+      wpw_cop_stat_old:
+        friendly_name: "WPW COP STAT(OLD)"
+        value_template: >-
+          {% if  is_number(states('sensor.wpw_cop' ) ) and (states('sensor.wpw_cop' ) ) | float > 0 %}
+          {{ states('sensor.wpw_cop') | float }}
+          {% else %}
+          {{ none }}
+          {% endif %}
+  - platform: template
+    sensors:
+      wpw_cop_stat:
+        friendly_name: "WPW COP STAT"
+        unit_of_measurement: ""
+        value_template: >
+          {% set v = states('sensor.wpw_cop') %}
+          {% set v_num = v | float(0) %}
+          {% set last = state_attr('sensor.wpw_cop_stat', 'last_valid') | float(0) %}
+
+          {% if v in ['unknown','unavailable','none',''] %}
+            {{ none }}
+          {% elif v_num <= 0 %}
+            {{ none }}
+          {% elif v_num > 9 %}
+            {{ last }}
+          {% else %}
+            {{ v_num }}
+          {% endif %}
+        attribute_templates:
+          last_valid: >
+            {% set v = states('sensor.wpw_cop') | float(0) %}
+            {% set last = state_attr('sensor.wpw_cop_stat', 'last_valid') | float(0) %}
+            {% if v > 0 and v <= 9 %}
+              {{ v }}
+            {% else %}
+              {{ last }}
+            {% endif %}
+
+  - platform: filter
+    name: WPW Mittlerer COP (1h)
+    entity_id: sensor.wpw_cop_stat
+    filters:
+      - filter: time_simple_moving_average
+        window_size: "01:00"
+        precision: 2
+
+  - platform: filter
+    name: WPW Mittlerer COP (24h)
+    entity_id: sensor.wpw_cop_stat
+    filters:
+      - filter: time_simple_moving_average
+        window_size: "24:00"
+        precision: 2
+  - platform: history_stats
+    name: WPW Betriebszeit des Kompressors
+    entity_id: binary_sensor.wpw_os1_compressor
+    state: "on"
+    type: time
+    start: "{{ now().replace(hour=0, minute=0, second=0) }}"
+    end: "{{ now() }}"
+  - platform: history_stats
+    name: WPW Anzahl der Kompressorstarts
+    entity_id: binary_sensor.wpw_os1_compressor
+    state: "on"
+    type: count
+    start: "{{ now().replace(hour=0, minute=0, second=0) }}"
+    end: "{{ now() }}"
+binary_sensor:
+  - platform: template
+    sensors:
+      wpw_os1_compressor:
+        friendly_name: "WPW OS1 Compressor"
+        value_template: "{{ states('sensor.wpw_output_symbol1_compressor_status')  }}"
