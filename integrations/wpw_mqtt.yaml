@@ -12,10 +12,6 @@ mqtt:
       retain: false
 
   sensor:
-    - name: "WPW Debug Raw Message"
-      state_topic: "WP/status/Wohnhaus"
-      value_template: "{{ value }}"
-
     - name: "Ölheizung Brennerstatus (Text)"
       state_topic: "SmartHome/Keller/TEMP_KESSEL/tele/SENSOR"
       value_template: "{{ value_json.Switch1 }}"
@@ -109,6 +105,11 @@ mqtt:
       state_topic: "WP/status/Wohnhaus"
       value_template: "{{ value_json['DcBusVoltage']['value'] }}"
       unit_of_measurement: "V"
+
+    - name: "WPW Driving Temperature"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['DrivingTemp']['value'] }}"
+      unit_of_measurement: "°C"
 
     - name: "WPW DC Fan1 Speed"
       state_topic: "WP/status/Wohnhaus"
@@ -537,6 +538,31 @@ mqtt:
       value_template: "{{ value_json['P03TempDiff']['value'] }}"
       unit_of_measurement: "°C"
 
+    - name: "WPW F39 AC Const Temp Diff"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F39AcConstTempDiff']['value'] }}"
+      unit_of_measurement: "°C"
+
+    - name: "WPW F40 WT Const Temp Diff"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F40WTConstTempDiff']['value'] }}"
+      unit_of_measurement: "°C"
+
+    - name: "WPW F44 Temp Calibration"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F44TempCali']['value'] }}"
+      unit_of_measurement: "°C"
+
+    - name: "WPW F45 Inlet Temp Calibration"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F45InletTempCali']['value'] }}"
+      unit_of_measurement: "°C"
+
+    - name: "WPW F46 Outlet Temp Calibration"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F46OutletTempCali']['value'] }}"
+      unit_of_measurement: "°C"
+
     - name: "WPW P05 Temp Diff"
       state_topic: "WP/status/Wohnhaus"
       value_template: "{{ value_json['P05TempDiff']['value'] }}"
@@ -930,24 +956,32 @@ mqtt:
 #            {{ none }}
 #            {% endif %}
 
-# Hier starten die Template Sesoren
-sensor:
-  - platform: template
-    sensors:
-      wpw_cop_stat_old:
-        friendly_name: "WPW COP STAT(OLD)"
-        value_template: >-
-          {% if  is_number(states('sensor.wpw_cop' ) ) and (states('sensor.wpw_cop' ) ) | float > 0 %}
-          {{ states('sensor.wpw_cop') | float }}
+# Hier starten die Template Sensoren(neue Syntax)
+template:
+  - sensor:
+      - name: "WPW Heatflow (corrected)"
+        unique_id: wpw_heatflow_corrected
+        unit_of_measurement: "W"
+        state: >-
+          {% if states('binary_sensor.wpw_os1_compressor') == "on" %}
+            {{ (( (states('sensor.wpw_delta_t') | float) -1.7) * (states('sensor.wpw_pump_flow') | float * 1000 / 3600 * 4182) ) | round(0) | int }}
           {% else %}
-          {{ none }}
+            0
           {% endif %}
-  - platform: template
-    sensors:
-      wpw_cop_stat:
-        friendly_name: "WPW COP STAT"
+
+      - name: "WPW COP STAT(OLD)"
+        unique_id: wpw_cop_stat_old
+        state: >-
+          {% if is_number(states('sensor.wpw_cop')) and (states('sensor.wpw_cop')) | float > 0 %}
+            {{ states('sensor.wpw_cop') | float }}
+          {% else %}
+            {{ none }}
+          {% endif %}
+
+      - name: "WPW COP STAT"
+        unique_id: wpw_cop_stat
         unit_of_measurement: ""
-        value_template: >
+        state: >
           {% set v = states('sensor.wpw_cop') %}
           {% set v_num = v | float(0) %}
           {% set last = state_attr('sensor.wpw_cop_stat', 'last_valid') | float(0) %}
@@ -961,7 +995,7 @@ sensor:
           {% else %}
             {{ v_num }}
           {% endif %}
-        attribute_templates:
+        attributes:
           last_valid: >
             {% set v = states('sensor.wpw_cop') | float(0) %}
             {% set last = state_attr('sensor.wpw_cop_stat', 'last_valid') | float(0) %}
@@ -971,8 +1005,40 @@ sensor:
               {{ last }}
             {% endif %}
 
+      # Neue gefilterte Sensoren für EEV Steps - als Integer
+      - name: "WPW EEV1 Step Clean"
+        unique_id: wpw_eev1_step_clean
+        unit_of_measurement: "Steps"
+        state: >
+          {% set raw_value = states('sensor.wpw_eev1_step') | float(default=0) %}
+          {% if raw_value >= 0 and raw_value <= 500 %}
+            {{ (raw_value | int) }}
+          {% else %}
+            {% set last_value = states('sensor.wpw_eev1_step_clean') | default(0) | float %}
+            {{ (last_value | int) }}
+          {% endif %}
+
+      - name: "WPW EEV2 Step Clean"
+        unique_id: wpw_eev2_step_clean
+        unit_of_measurement: "Steps"
+        state: >
+          {% set raw_value = states('sensor.wpw_eev2_step') | float(default=0) %}
+          {% if raw_value >= 0 and raw_value <= 500 %}
+            {{ (raw_value | int) }}
+          {% else %}
+            {% set last_value = states('sensor.wpw_eev2_step_clean') | default(0) | float %}
+            {{ (last_value | int) }}
+          {% endif %}
+
+  - binary_sensor:
+      - name: "WPW OS1 Compressor"
+        unique_id: wpw_os1_compressor
+        state: "{{ states('sensor.wpw_output_symbol1_compressor_status') }}"
+
+# Filter Sensoren und History Stats bleiben wie bisher
+sensor:
   - platform: filter
-    name: WPW Mittlerer COP (1h)
+    name: "WPW Mittlerer COP (1h)"
     entity_id: sensor.wpw_cop_stat
     filters:
       - filter: time_simple_moving_average
@@ -980,29 +1046,41 @@ sensor:
         precision: 2
 
   - platform: filter
-    name: WPW Mittlerer COP (24h)
+    name: "WPW Mittlerer COP (24h)"
     entity_id: sensor.wpw_cop_stat
     filters:
       - filter: time_simple_moving_average
         window_size: "24:00"
         precision: 2
+
   - platform: history_stats
-    name: WPW Betriebszeit des Kompressors
+    name: "WPW Betriebszeit des Kompressors"
     entity_id: binary_sensor.wpw_os1_compressor
     state: "on"
     type: time
     start: "{{ now().replace(hour=0, minute=0, second=0) }}"
     end: "{{ now() }}"
+
   - platform: history_stats
-    name: WPW Anzahl der Kompressorstarts
+    name: "WPW Anzahl der Kompressorstarts"
     entity_id: binary_sensor.wpw_os1_compressor
     state: "on"
     type: count
     start: "{{ now().replace(hour=0, minute=0, second=0) }}"
     end: "{{ now() }}"
-binary_sensor:
-  - platform: template
-    sensors:
-      wpw_os1_compressor:
-        friendly_name: "WPW OS1 Compressor"
-        value_template: "{{ states('sensor.wpw_output_symbol1_compressor_status')  }}"
+
+  - platform: integration
+    source: sensor.wpw_heatflow_corrected
+    name: "WPW Heat Energy Total"
+    unit_prefix: k
+    round: 2
+    method: trapezoidal
+
+utility_meter:
+  wpw_heat_energy_hourly:
+    source: sensor.wpw_heat_energy_total
+    cycle: hourly
+
+  wpw_heat_energy_daily:
+    source: sensor.wpw_heat_energy_total
+    cycle: daily

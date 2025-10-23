@@ -53,13 +53,13 @@ input_number:
     min: 2
     max: 18
     step: 1
-  
+
   wpw_g03_start_internal:
     name: WPW G03 Start Internal
     initial: 5
     min: 1
     max: 120
-    step: 1  
+    step: 1
 
   wpw_g04_delta_temp_set:
     name: WPW G04 Delta Temp Set
@@ -68,16 +68,51 @@ input_number:
     max: 30
     step: 1
 
+  wpw_f39_ac_const_temp_diff:
+    name: WPW F39 AC Const Temp Diff
+    initial: 2
+    min: 0
+    max: 10
+    step: 1
+
+  wpw_f40_wt_const_temp_diff:
+    name: WPW F40 WT Const Temp Diff
+    initial: 0
+    min: 0
+    max: 10
+    step: 1
+
+  wpw_f44_temp_calibration:
+    name: WPW F44 Temp Calibration
+    initial: 2
+    min: -30
+    max: 30
+    step: 1
+
+  wpw_f45_inlet_temp_calibration:
+    name: WPW F45 Inlet Temp Calibration
+    initial: 0
+    min: -30
+    max: 30
+    step: 1
+
+  wpw_f46_outlet_temp_calibration:
+    name: WPW F45 Outlet Temp Calibration
+    initial: 1
+    min: -30
+    max: 30
+    step: 1
+
 input_select:
   # Bestehende input_number Einträge...
-  
+
   # Neue Input-Selects für textbasierte Parameter
   wpw_p06_unit_mode:
     name: "WPW P06 Unit Mode"
     options:
       - "DHW"
       - "Heating"
-      - "Cooling" 
+      - "Cooling"
       - "Heating+DHW"
       - "Cooling+DHW"
     icon: mdi:heat-pump
@@ -115,7 +150,7 @@ input_boolean:
 # Automatisierungen für die neuen Parameter
 automation:
   # Bestehende Automatisierungen...
-  
+
   - alias: "Update Modbus wpw_p06_unit_mode"
     description: "Sendet den geänderten Unit Mode an Modbus"
     mode: single
@@ -275,6 +310,76 @@ automation:
           slave: !secret wpw_modbus_slave
           address: 0x018D #
           value: "{{ states('input_number.wpw_g04_delta_temp_set') | int }}"
+
+  - alias: "Update Modbus wpw_f39_ac_const_temp_diff"
+    description: "Sendet den geänderten Wert des F39 AC Const Temp"
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: input_number.wpw_f39_ac_const_temp_diff
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x00C7 #
+          value: "{{ states('input_number.wpw_f39_ac_const_temp_diff') | int }}"
+
+  - alias: "Update Modbus wpw_f40_wt_const_temp_diff"
+    description: "Sendet den geänderten Wert des F40 WT Const Temp"
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: input_number.wpw_f40_wt_const_temp_diff
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x00C9 #
+          value: "{{ states('input_number.wpw_f40_wt_const_temp_diff') | int }}"
+
+  - alias: "Update Modbus wpw_f44_temp_calibration"
+    description: "Sendet den geänderten Wert des F44 Temp Calibration"
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: input_number.wpw_f44_temp_calibration
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x00CD #
+          value: "{{ states('input_number.wpw_f44_temp_calibration') | int }}"
+
+  - alias: "Update Modbus wpw_f45_inlet_temp_calibration"
+    description: "Sendet den geänderten Wert des F45 Inlet Temp Calibration"
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: input_number.wpw_f45_inlet_temp_calibration
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x00CE #
+          value: "{{ states('input_number.wpw_f45_inlet_temp_calibration') | int }}"
+
+  - alias: "Update Modbus wpw_f46_outlet_temp_calibration"
+    description: "Sendet den geänderten Wert des F46 Outlet Temp Calibration"
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: input_number.wpw_f46_outlet_temp_calibration
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x00CF #
+          value: "{{ states('input_number.wpw_f46_outlet_temp_calibration') | int }}"
 
   # Schreibe gesamtes Register wenn sich ein Bit ändert
   - alias: "Write Parameter Marker Definition Register"
