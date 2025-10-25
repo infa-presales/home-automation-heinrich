@@ -73,9 +73,9 @@
           '4': 'Cooling+DHW (Kühlen + Warmwasser)'
         } %}
         {{ modes.get(mode, 'Unbekannt: ' ~ mode) }}
-      
+
     - name: "WPW P07 Fan Mode Display"
-      unique_id: "wpw_p07_fan_mode_display" 
+      unique_id: "wpw_p07_fan_mode_display"
       state: >
         {% set mode = states('sensor.wpw_p07_fan_mode') %}
         {% set modes = {
@@ -85,9 +85,9 @@
           '3': 'Hi-COP (Test)'
         } %}
         {{ modes.get(mode, 'Unbekannt: ' ~ mode) }}
-      
+
     - name: "WPW G02 Pump Work Display"
-      unique_id: "wpw_g02_pump_work_display" 
+      unique_id: "wpw_g02_pump_work_display"
       state: >
         {% set mode = states('sensor.wpw_g02_pump_work') %}
         {% set modes = {
@@ -96,3 +96,33 @@
           '2': 'Demand'
         } %}
         {{ modes.get(mode, 'Unbekannt: ' ~ mode) }}
+
+    - name: "WPW Real COP (hourly)"
+      unique_id: wpw_real_cop_hourly
+      unit_of_measurement: ""
+      state: >-
+        {% if states('sensor.wpw_total_energy_consumption_hourly') | float > 0 %}
+          {{ ((states('sensor.wpw_heat_energy_hourly') | float) / (states('sensor.wpw_total_energy_consumption_hourly') | float)) | round(2) }}
+        {% else %}
+          {{ None }}
+        {% endif %}
+
+    - name: "WPW Real COP (daily)"
+      unique_id: wpw_real_cop_daily
+      unit_of_measurement: ""
+      state: >-
+        {% if states('sensor.wpw_total_energy_consumption_daily') | float > 0 %}
+          {{ ((states('sensor.wpw_heat_energy_daily') | float) / (states('sensor.wpw_total_energy_consumption_daily') | float)) | round(2) }}
+        {% else %}
+          {{ None }}
+        {% endif %}
+
+    - name: "WPW COP (comp.)"
+      unique_id: wpw_cop_comp
+      unit_of_measurement: ""
+      state: >-
+        {% if states('binary_sensor.wpw_os1_compressor') == "on" %}
+          {{ ( (states('sensor.wpw_heatflow_corrected') | float) / (states('sensor.wpw_total_ac_power_consumption_shelly') | float) ) | round(2)  }}
+        {% else %}
+          {{ none }}
+        {% endif %}

@@ -68,6 +68,13 @@ input_number:
     max: 30
     step: 1
 
+  wpw_g04_delta_temp_set2:
+    name: WPW G04 Delta Temp Set2
+    initial: 5
+    min: 5
+    max: 30
+    step: 1
+
   wpw_f39_ac_const_temp_diff:
     name: WPW F39 AC Const Temp Diff
     initial: 2
@@ -82,24 +89,38 @@ input_number:
     max: 10
     step: 1
 
+  wpw_f42_wasser_temp_diff:
+    name: WPW F42 Wasser Temp Diff
+    initial: 0
+    min: 0
+    max: 10
+    step: 1
+
+  wpw_f43_inlet_temp_diff:
+    name: WPW F43 Inlet Temp Diff
+    initial: 0
+    min: 0
+    max: 10
+    step: 1
+
   wpw_f44_temp_calibration:
     name: WPW F44 Temp Calibration
     initial: 2
-    min: -30
+    min: 0
     max: 30
     step: 1
 
   wpw_f45_inlet_temp_calibration:
     name: WPW F45 Inlet Temp Calibration
     initial: 0
-    min: -30
+    min: 0
     max: 30
     step: 1
 
   wpw_f46_outlet_temp_calibration:
     name: WPW F45 Outlet Temp Calibration
     initial: 1
-    min: -30
+    min: 0
     max: 30
     step: 1
 
@@ -298,7 +319,7 @@ automation:
           value: "{{ states('input_number.wpw_g03_start_internal') | int }}"
 
   - alias: "Update Modbus wpw_g04_delta_temp_set"
-    description: "Sendet den geänderten Wert des G04 Delta Temp"
+    description: "Sendet den geänderten Wert des G04 Delta Temp Set"
     mode: single
     triggers:
       - trigger: state
@@ -310,6 +331,20 @@ automation:
           slave: !secret wpw_modbus_slave
           address: 0x018D #
           value: "{{ states('input_number.wpw_g04_delta_temp_set') | int }}"
+
+  - alias: "Update Modbus wpw_g04_delta_temp_set2"
+    description: "Sendet den geänderten Wert des G04 Delta Temp Set2"
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: input_number.wpw_g04_delta_temp_set2
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x00DD #
+          value: "{{ states('input_number.wpw_g04_delta_temp_set2') | int }}"
 
   - alias: "Update Modbus wpw_f39_ac_const_temp_diff"
     description: "Sendet den geänderten Wert des F39 AC Const Temp"
@@ -338,6 +373,34 @@ automation:
           slave: !secret wpw_modbus_slave
           address: 0x00C9 #
           value: "{{ states('input_number.wpw_f40_wt_const_temp_diff') | int }}"
+
+  - alias: "Update Modbus wpw_f42_wasser_temp_diff"
+    description: "Sendet den geänderten Wert des WPW F42 Wasser Temp Diff"
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: input_number.wpw_f42_wasser_temp_diff
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x00D2 #
+          value: "{{ states('input_number.wpw_f42_wasser_temp_diff') | int }}"
+
+  - alias: "Update Modbus wpw_f43_inlet_temp_diff"
+    description: "Sendet den geänderten Wert des WPW F43 Inlet Temp Diff"
+    mode: single
+    triggers:
+      - trigger: state
+        entity_id: input_number.wpw_f43_inlet_temp_diff
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 0x00D3 #
+          value: "{{ states('input_number.wpw_f43_inlet_temp_diff') | int }}"
 
   - alias: "Update Modbus wpw_f44_temp_calibration"
     description: "Sendet den geänderten Wert des F44 Temp Calibration"

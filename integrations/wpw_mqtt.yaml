@@ -538,6 +538,41 @@ mqtt:
       value_template: "{{ value_json['P03TempDiff']['value'] }}"
       unit_of_measurement: "°C"
 
+    - name: "WPW F13 Pump Cycle 0=Man 1=Auto"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F13DCPumpMode']['value'] }}"
+      unit_of_measurement: ""
+
+    - name: "WPW F14 Pump Cycle "
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F14PumpCycle']['value'] }}"
+      unit_of_measurement: "s"
+
+    - name: "WPW F15DCPumpFreqSet"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F15DCPumpFreqSet']['value'] }}"
+      unit_of_measurement: "%"
+
+    - name: "WPW F16DCPumpMaxFreq"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F16DCPumpMaxFreq']['value'] }}"
+      unit_of_measurement: "%"
+
+    - name: "WPW F17 DC Pump Min Freq"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F17DCPumpMinFreq']['value'] }}"
+      unit_of_measurement: "%"
+
+    - name: "WPW F18 DC Pump ScalaFactor"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F18DCPumpScalaFactor']['value'] }}"
+      unit_of_measurement: ""
+
+    - name: "WPW F19 DC Pump Diff"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F19DCPumpDiff']['value'] }}"
+      unit_of_measurement: ""
+
     - name: "WPW F39 AC Const Temp Diff"
       state_topic: "WP/status/Wohnhaus"
       value_template: "{{ value_json['F39AcConstTempDiff']['value'] }}"
@@ -546,6 +581,16 @@ mqtt:
     - name: "WPW F40 WT Const Temp Diff"
       state_topic: "WP/status/Wohnhaus"
       value_template: "{{ value_json['F40WTConstTempDiff']['value'] }}"
+      unit_of_measurement: "°C"
+
+    - name: "WPW F42 Wasser Temp Diff"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F42WaterTempOffset']['value'] }}"
+      unit_of_measurement: "°C"
+
+    - name: "WPW F43 Inlet Temp Diff"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['F43InletTempOffset']['value'] }}"
       unit_of_measurement: "°C"
 
     - name: "WPW F44 Temp Calibration"
@@ -737,6 +782,11 @@ mqtt:
     - name: "WPW G04 Delta Temp Set"
       state_topic: "WP/status/Wohnhaus"
       value_template: "{{ value_json['G04DeltaTempSet']['value'] }}"
+      unit_of_measurement: "°C"
+
+    - name: "WPW G04 Delta Temp Set2"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['G04DeltaTempSet2']['value'] }}"
       unit_of_measurement: "°C"
 
     - name: "WPW P06 Unit Mode"
