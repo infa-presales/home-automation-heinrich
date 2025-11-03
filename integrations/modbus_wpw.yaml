@@ -64,14 +64,14 @@ input_number:
   wpw_g04_delta_temp_set:
     name: WPW G04 Delta Temp Set
     initial: 5
-    min: 5
+    min: 1
     max: 30
     step: 1
 
   wpw_g04_delta_temp_set2:
     name: WPW G04 Delta Temp Set2
     initial: 5
-    min: 5
+    min: 1
     max: 30
     step: 1
 

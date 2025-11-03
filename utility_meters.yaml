@@ -17,41 +17,41 @@ sg10rt_tagesertrag_energy_um:
 wpw_total_active_energy_hourly:
   name: "WPW Total Energy Consumption hourly"
   unique_id: wpw_total_active_energy_hourly
-  source: sensor.pro3em_wp_wohnhaus_total_active_energy
+  source: sensor.shellypro3em_2cbcbba653a0_total_active_energy
   cycle: hourly
 
 wpw_total_active_energy_daily:
   name: "WPW Total Energy Consumption daily"
   unique_id: wpw_total_active_energy_daily
-  source: sensor.pro3em_wp_wohnhaus_total_active_energy
+  source: sensor.shellypro3em_2cbcbba653a0_total_active_energy
   cycle: daily
 
 wpw_total_active_energy_weekly:
   name: "WPW Total Energy Consumption weekly"
   unique_id: wpw_total_active_energy_weekly
-  source: sensor.pro3em_wp_wohnhaus_total_active_energy
+  source: sensor.shellypro3em_2cbcbba653a0_total_active_energy
   cycle: weekly
 
 wpw_total_active_energy_monthly:
   name: "WPW Total Energy Consumption monthly"
   unique_id: wpw_total_active_energy_monthly
-  source: sensor.pro3em_wp_wohnhaus_total_active_energy
+  source: sensor.shellypro3em_2cbcbba653a0_total_active_energy
   cycle: monthly
 
 wpw_total_active_energy_yearly:
   name: "WPW Total Energy Consumption yearly"
   unique_id: wp_total_active_energy_yearly
-  source: sensor.pro3em_wp_wohnhaus_total_active_energy
+  source: sensor.shellypro3em_2cbcbba653a0_total_active_energy
   cycle: yearly
 
 ################################
-wpw_hourly_energy:
+wpw_hourly_energy: # funktioniert
   name: "WPW Hourly Energy Consumption"
   unique_id: wpw_hourly_energy
   source: sensor.wpw_energy_consumption
   cycle: hourly
 
-wpw_daily_energy:
+wpw_daily_energy: # funktioniert
   name: "WPW Daily Energy Consumption"
   unique_id: wpw_daily_energy
   source: sensor.wpw_energy_consumption
@@ -73,4 +73,25 @@ wpw_yearly_energy:
   name: "WPW Yearly Energy Consumption"
   unique_id: wpw_yearly_energy
   source: sensor.wpw_energy_consumption
+  cycle: yearly
+
+# Entries from integrations/wpw_mqtt.yaml
+wpw_heat_energy_hourly:
+  source: sensor.wpw_heat_energy_total
+  cycle: hourly
+
+wpw_heat_energy_daily:
+  source: sensor.wpw_heat_energy_total
+  cycle: daily
+
+wpw_heat_energy_weekly:
+  source: sensor.wpw_heat_energy_total
+  cycle: weekly
+
+wpw_heat_energy_monthly:
+  source: sensor.wpw_heat_energy_total
+  cycle: monthly
+
+wpw_heat_energy_yearly:
+  source: sensor.wpw_heat_energy_total
   cycle: yearly
