@@ -1,0 +1,19 @@
+- alias: "Sync Brennersperre 1 -> 2"
+  mode: restart
+  trigger:
+    - trigger: state
+      entity_id: switch.shellyplus1_brennersperre1
+  action:
+    - action: "switch.turn_{{ trigger.to_state.state }}"
+      target:
+        entity_id: switch.shellyplus1_brennersperre2
+
+- alias: "Sync Brennersperre 2 -> 1"
+  mode: restart
+  trigger:
+    - trigger: state
+      entity_id: switch.shellyplus1_brennersperre2
+  action:
+    - action: "switch.turn_{{ trigger.to_state.state }}"
+      target:
+        entity_id: switch.shellyplus1_brennersperre1
