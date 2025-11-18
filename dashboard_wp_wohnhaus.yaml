@@ -2,24 +2,28 @@ views:
   - title: Status Wohnhaus
     sections:
       - cards:
-          - type: vertical-stack
-            cards:
-              - show_name: true
-                show_icon: true
-                type: button
-                entity: switch.brennersperre
-                name: Brenner (Master)
-                icon: mdi:power
-                tap_action:
-                  action: toggle
-              - type: horizontal-stack
-                cards:
-                  - type: entity
-                    entity: switch.shellyplus1_brennersperre1
-                    name: Brenner Control1
-                  - type: entity
-                    entity: switch.shellyplus1_brennersperre2
-                    name: Brenner Control2
+          - type: entity
+            entity: switch.heizungssperre
+          - type: entity
+            entity: sensor.olheizung_brennerstatus_text
+            state_color: true
+          - type: entities
+            entities:
+              - entity: sensor.shellyplus1pm_oelheizung_switch_0_power
+                name: Leistungsaufnahme
+              - entity: sensor.shellyplus1pm_oelheizung_switch_0_energy
+                name: Energie (summiert)
+              - entity: sensor.shellyplus1pm_oelheizung_switch_0_voltage
+                name: Spannung
+              - entity: sensor.shellyplus1pm_oelheizung_switch_0_current
+                name: Strom
+              - entity: sensor.shellyplus1pm_oelheizung_uptime
+                name: Uptime
+              - entity: sensor.shellyplus1pm_oelheizung_rssi
+                name: WLAN Empfang (RSSI)
+              - entity: sensor.olheizung_brennerstatus_numerisch
+              - entity: sensor.olheizung_brennerstatus_text
+            title: Ölheizung
           - type: custom:mini-graph-card
             name: Kesseltemperatur & Brennerstatus(24h)
             hours_to_show: 24
@@ -46,50 +50,80 @@ views:
                 smoothing: false
           - title: Verlauf
             type: history-graph
-            hours_to_show: 24
             entities:
+              - entity: sensor.olheizung_brennerstatus_numerisch
+              - entity: sensor.wpw_p07_fan_mode_display
+              - entity: binary_sensor.wpw_os1_compressor
               - entity: sensor.wpw_ambient_temperature
+              - entity: sensor.wpw_p01_heating_setp
               - entity: sensor.wpw_inlet_temperature
               - entity: sensor.wpw_outlet_temperature
-              - entity: sensor.wpw_total_ac_power_consumption_shelly
               - entity: sensor.wpw_eco_target_temperature
               - entity: sensor.wpw_p03_temp_diff
               - entity: sensor.wpw_energy_consumption_int
               - entity: sensor.wpw_temperatur_kessel
               - entity: sensor.wpw_temperatur_kessel_rl
-              - entity: sensor.olheizung_brennerstatus_numerisch
               - entity: sensor.bg_total_active_power
               - entity: sensor.bg_active_power_l1
               - entity: sensor.bg_active_power_l2
               - entity: sensor.bg_active_power_l3
+              - entity: sensor.wpw_g04_delta_temp_set
+              - entity: sensor.wpw_delta_t
+              - entity: sensor.wpw_ac_power_computed
+              - entity: sensor.wpw_delta_t
+              - entity: sensor.shellypro3em_2cbcbba653a0_total_active_power
+              - entity: sensor.openweathermap_temperature
+                name: OWM Temperatur
+              - entity: sensor.owm_temperature_hourly_mean
+                name: OWM Temperatur Stundenmittel
+            hours_to_show: 30
           - type: entities
             title: Energieverbrauch (Shelly Int)
             entities:
-              - entity: sensor.pro3em_wp_wohnhaus_total_active_energy
+              - entity: sensor.shellypro3em_2cbcbba653a0_total_active_power
+                secondary_info: last-updated
+              - entity: sensor.shellypro3em_2cbcbba653a0_phase_a_active_power
+                secondary_info: last-updated
+              - entity: sensor.shellypro3em_2cbcbba653a0_phase_b_active_power
+                secondary_info: last-updated
+              - entity: sensor.shellypro3em_2cbcbba653a0_phase_c_active_power
+                secondary_info: last-updated
+              - entity: sensor.shellypro3em_2cbcbba653a0_total_active_energy
+                secondary_info: last-updated
               - entity: sensor.wpw_total_energy_consumption_hourly
                 name: Stundenverbrauch (kWh)
+                secondary_info: last-updated
               - entity: sensor.wpw_total_energy_consumption_daily
                 name: Tagesverbrauch (kWh)
+                secondary_info: last-updated
               - entity: sensor.wpw_total_energy_consumption_weekly
                 name: Wochenverbrauch (kWh)
+                secondary_info: last-updated
               - entity: sensor.wpw_total_energy_consumption_monthly
                 name: Monatsverbrauch (kWh)
+                secondary_info: last-updated
               - entity: sensor.wpw_total_energy_consumption_yearly
                 name: Jahresverbrauch (kWh)
+                secondary_info: last-updated
           - type: entities
-            title: Energieverbrauch (Template, trapazoid)
+            title: Energiegewinnung (Wärme)
             entities:
-              - entity: sensor.wpw_energy_consumption
-              - entity: sensor.wpw_hourly_energy_consumption
-                name: Stundenverbrauch (kWh)
-              - entity: sensor.wpw_daily_energy_consumption
-                name: Tagesverbrauch (kWh)
-              - entity: sensor.wpw_weekly_energy_consumption
-                name: Wochenverbrauch (kWh)
-              - entity: sensor.wpw_monthly_energy_consumption
-                name: Monatsverbrauch (kWh)
-              - entity: sensor.wpw_yearly_energy_consumption
-                name: Jahresverbrauch (kWh)
+              - entity: sensor.wpw_heat_energy_hourly
+                secondary_info: last-changed
+              - entity: sensor.wpw_heat_energy_daily
+                secondary_info: last-changed
+              - entity: sensor.wpw_heat_energy_weekly
+                secondary_info: last-changed
+              - entity: sensor.wpw_heat_energy_monthly
+                secondary_info: last-changed
+              - entity: sensor.wpw_heat_energy_yearly
+                secondary_info: last-changed
+              - entity: sensor.wpw_heat_energy_total_corr
+                secondary_info: last-changed
+              - entity: sensor.wpw_real_cop_hourly
+                secondary_info: last-changed
+              - entity: sensor.wpw_real_cop_daily
+                secondary_info: last-changed
       - type: grid
         cards:
           - type: entities
@@ -101,38 +135,114 @@ views:
             heading_style: title
           - type: entities
             entities:
+              - entity: binary_sensor.wpw_os1_compressor
+                secondary_info: last-updated
+              - entity: sensor.wpw_anzahl_der_kompressorstarts
+                secondary_info: last-updated
+              - entity: sensor.wpw_betriebszeit_des_kompressors
+                secondary_info: last-updated
               - entity: sensor.wpw_total_ac_power_consumption_shelly
+                secondary_info: last-updated
               - entity: sensor.wpw_heating_capacity
+                secondary_info: last-updated
+              - entity: sensor.wpw_cop_comp
+                secondary_info: last-updated
               - entity: sensor.wpw_cop
+                secondary_info: last-updated
+              - entity: sensor.wpw_cop_stat
+                secondary_info: last-updated
               - entity: sensor.wpw_pump_flow
+                secondary_info: last-updated
               - entity: sensor.wpw_heatflow
+                secondary_info: last-updated
+              - entity: sensor.wpw_heatflow_corrected
+                secondary_info: last-updated
               - entity: sensor.wpw_dc_pump_speed
+                secondary_info: last-updated
               - entity: sensor.wpw_compressor_frequency
+                secondary_info: last-updated
               - entity: sensor.wpw_ac_voltage
+                secondary_info: last-updated
               - entity: sensor.wpw_ac_current
+                secondary_info: last-updated
               - entity: sensor.wpw_ac_power_computed
+                secondary_info: last-updated
               - entity: sensor.wpw_dc_fan_target
+                secondary_info: last-updated
               - entity: sensor.wpw_dc_fan1_speed
+                secondary_info: last-updated
               - entity: sensor.wpw_dc_fan2_speed
+                secondary_info: last-updated
                 name: WPW DC Fan2 Speed
+              - entity: sensor.wpw_dc_bus_voltage
+                secondary_info: last-updated
             title: Overview (Read-only)
           - type: entities
             entities:
+              - entity: sensor.openweathermap_temperature
+                name: OWM Temperatur
+                secondary_info: last-updated
+              - entity: sensor.owm_temperature_hourly_mean
+                name: OWM Temperatur Mov.Avg.
+                secondary_info: last-updated
+              - entity: sensor.owm_temperature_hourly_fixed
+                name: OWM Temperatur Last Hour
               - entity: sensor.wpw_ambient_temperature
+                secondary_info: last-updated
               - entity: sensor.wpw_inlet_temperature
+                secondary_info: last-updated
               - entity: sensor.wpw_outlet_temperature
+                secondary_info: last-updated
               - entity: sensor.wpw_delta_t
-              - entity: sensor.wpw_heatflow
+                secondary_info: last-updated
               - entity: sensor.wpw_exhaust_temperature
+                secondary_info: last-updated
               - entity: sensor.wpw_evaporation_temperature
+                secondary_info: last-updated
               - entity: sensor.wpw_coil_temperature
+                secondary_info: last-updated
               - entity: sensor.wpw_condensation_temperature
+                secondary_info: last-updated
+              - entity: sensor.wpw_driving_temperature
+                secondary_info: last-updated
               - entity: sensor.wpw_return_gas_temperature
+                secondary_info: last-updated
               - entity: sensor.wpw_suct_pressure
+                secondary_info: last-updated
               - entity: sensor.wpw_disch_pressure
+                secondary_info: last-updated
               - entity: sensor.wpw_eev1_step
+                secondary_info: last-updated
+              - entity: sensor.wpw_eev1_step_clean
+                secondary_info: last-updated
               - entity: sensor.wpw_eev2_step
+                secondary_info: last-updated
+              - entity: sensor.wpw_eev2_step_clean
+                secondary_info: last-updated
             title: Temp / Press (Read-only)
+          - type: entities
+            entities:
+              - entity: sensor.bg_total_active_energy
+              - entity: sensor.bg_total_active_power
+              - entity: sensor.bg_active_power_l1
+              - entity: sensor.bg_active_power_l2
+              - entity: sensor.bg_active_power_l3
+              - entity: sensor.bg_total_reactive_power
+              - entity: sensor.bg_total_apparent_power
+              - entity: sensor.bg_total_reactive_energy
+              - entity: sensor.bg_forward_active_energy
+              - entity: sensor.bg_forward_reactive_energy
+              - entity: sensor.bg_reverse_active_energy
+              - entity: sensor.bg_reverse_reactive_energy
+              - entity: sensor.bg_frequency
+              - entity: sensor.bg_power_factor
+              - entity: sensor.bg_voltage_l1
+              - entity: sensor.bg_voltage_l2
+              - entity: sensor.bg_voltage_l3
+              - entity: sensor.bg_current_l1
+              - entity: sensor.bg_current_l2
+              - entity: sensor.bg_current_l3
+            title: Durchlauferhitzer
       - type: grid
         cards:
           - type: heading
@@ -141,24 +251,37 @@ views:
           - type: entities
             entities:
               - entity: sensor.wpw_output_symbol1_compressor_status
+                secondary_info: last-updated
               - entity: sensor.wpw_output_symbol1_switch_off
+                secondary_info: last-updated
               - entity: sensor.wpw_output_symbol1_fan_status
+                secondary_info: last-updated
               - entity: sensor.wpw_output_symbol1_4way_valve_status
+                secondary_info: last-updated
               - entity: sensor.wpw_output_symbol1_high_low_wind_status
+                secondary_info: last-updated
             title: Output Symbol 1
           - type: entities
             entities:
               - entity: sensor.wpw_output_symbol2_chassis_electric_heating_status
+                secondary_info: last-updated
               - entity: sensor.wpw_output_symbol2_heating_heater_status
+                secondary_info: last-updated
               - entity: sensor.wpw_output_symbol2_three_valve_status
+                secondary_info: last-updated
               - entity: sensor.wpw_output_symbol2_hotwater_heater_status
+                secondary_info: last-updated
             title: Output Symbol 2
           - type: entities
             entities:
               - entity: sensor.wpw_output_symbol3_end_pump_status
+                secondary_info: last-updated
               - entity: sensor.wpw_output_symbol3_crank_heater_status
+                secondary_info: last-updated
               - entity: sensor.wpw_output_symbol3_enhanced_enthalpy_status
+                secondary_info: last-updated
               - entity: sensor.wpw_output_symbol3_waterpump_status
+                secondary_info: last-updated
             title: Output Symbol 3
       - type: grid
         cards:
@@ -166,16 +289,45 @@ views:
             heading: Status
             heading_style: title
           - type: entities
+            title: Energieverbrauch (Template, trapazoid)
+            entities:
+              - entity: sensor.wpw_energy_consumption
+                secondary_info: last-updated
+              - entity: sensor.wpw_hourly_energy_consumption
+                name: Stundenverbrauch (kWh)
+                secondary_info: last-updated
+              - entity: sensor.wpw_daily_energy_consumption
+                name: Tagesverbrauch (kWh)
+                secondary_info: last-updated
+              - entity: sensor.wpw_weekly_energy_consumption
+                name: Wochenverbrauch (kWh)
+                secondary_info: last-updated
+              - entity: sensor.wpw_monthly_energy_consumption
+                name: Monatsverbrauch (kWh)
+                secondary_info: last-updated
+              - entity: sensor.wpw_yearly_energy_consumption
+                name: Jahresverbrauch (kWh)
+                secondary_info: last-updated
+          - type: entities
             entities:
               - entity: sensor.wpw_switching_input_end_linkage
+                secondary_info: last-updated
               - entity: sensor.wpw_switching_input_emergency
+                secondary_info: last-updated
               - entity: sensor.wpw_switching_input_heating_control
+                secondary_info: last-updated
               - entity: sensor.wpw_switching_input_cooling_control
+                secondary_info: last-updated
               - entity: sensor.wpw_switching_input_water_flow
+                secondary_info: last-updated
               - entity: sensor.wpw_switching_input_high_voltage
+                secondary_info: last-updated
               - entity: sensor.wpw_switchinginputphasesequence
+                secondary_info: last-updated
               - entity: sensor.wpw_switching_input_grid_sg_signal
+                secondary_info: last-updated
               - entity: sensor.wpw_switching_input_grid_euv_signal
+                secondary_info: last-updated
             title: Switching Input
           - type: entities
             entities:
@@ -222,6 +374,40 @@ views:
               - entity: sensor.wpw_return_gas_temperature
               - entity: sensor.wpw_suct_pressure
               - entity: sensor.wpw_disch_pressure
+              - entity: sensor.wpw_p01_heating_setp
+              - entity: binary_sensor.wpw_os1_compressor
+              - entity: sensor.wpw_p03_temp_diff
+              - entity: sensor.wpw_g04_delta_temp_set
+              - entity: sensor.wpw_heating_capacity
+              - entity: sensor.wpw_heatflow
+              - entity: sensor.wpw_heatflow_corrected
+              - entity: sensor.wpw_driving_temperature
+            grid_options:
+              columns: full
+        column_span: 4
+      - cards:
+          - type: heading
+            heading: Verlauf
+          - title: Output Symbole
+            type: history-graph
+            hours_to_show: 35
+            entities:
+              - entity: sensor.wpw_output_symbol1_compressor_status
+              - entity: sensor.wpw_output_symbol1_compressor_status
+                secondary_info: last-updated
+                name: Kompressor
+              - entity: sensor.wpw_output_symbol1_switch_off
+                secondary_info: last-updated
+                name: Schalter
+              - entity: sensor.wpw_output_symbol1_fan_status
+                secondary_info: last-updated
+                name: Gebläse
+              - entity: sensor.wpw_output_symbol1_4way_valve_status
+                secondary_info: last-updated
+                name: 4 Wege-Ventil
+              - entity: sensor.wpw_output_symbol1_high_low_wind_status
+                secondary_info: last-updated
+                name: Schnell / Langsam
             grid_options:
               columns: full
         column_span: 4
@@ -282,6 +468,20 @@ views:
               - entity: sensor.wpw_p06_unit_mode_display
               - entity: sensor.wpw_p07_fan_mode
               - entity: sensor.wpw_p07_fan_mode_display
+              - entity: sensor.wpw_f13_pump_cycle_0_man_1_auto
+              - entity: sensor.wpw_f14_pump_cycle
+              - entity: sensor.wpw_f15dcpumpfreqset
+              - entity: sensor.wpw_f16dcpumpmaxfreq
+              - entity: sensor.wpw_f17_dc_pump_min_freq
+              - entity: sensor.wpw_f18_dc_pump_scalafactor
+              - entity: sensor.wpw_f19_dc_pump_diff
+              - entity: sensor.wpw_f39_ac_const_temp_diff
+              - entity: sensor.wpw_f40_wt_const_temp_diff
+              - entity: sensor.wpw_f42_wasser_temp_diff
+              - entity: sensor.wpw_f43_inlet_temp_diff
+              - entity: sensor.wpw_f44_temp_calibration
+              - entity: sensor.wpw_f45_inlet_temp_calibration
+              - entity: sensor.wpw_f46_outlet_temp_calibration
             title: Aktuelle Zielparameter
           - type: entities
             entities:
@@ -301,6 +501,13 @@ views:
                 secondary_info: Target temperature Heating 10..55°C in 0.5K steps
               - entity: input_select.wpw_p07_fan_mode
                 secondary_info: Target temperature Heating 10..55°C in 0.5K steps
+              - entity: input_number.wpw_f39_ac_const_temp_diff
+              - entity: input_number.wpw_f40_wt_const_temp_diff
+              - entity: input_number.wpw_f42_wasser_temp_diff
+              - entity: input_number.wpw_f43_inlet_temp_diff
+              - entity: input_number.wpw_f44_temp_calibration
+              - entity: input_number.wpw_f45_inlet_temp_calibration
+              - entity: input_number.wpw_f46_outlet_temp_calibration
             title: Zielparameter Ändern
           - type: entities
             entities:
@@ -319,6 +526,7 @@ views:
               - entity: sensor.wpw_g02_pump_work_display
               - entity: sensor.wpw_g03_start_internal
               - entity: sensor.wpw_g04_delta_temp_set
+              - entity: sensor.wpw_g04_delta_temp_set2
               - entity: sensor.wpw_g05_heating_heater_ext
               - entity: sensor.wpw_g06_comp_delay
               - entity: sensor.wpw_g07_hotwater_heater_ext
@@ -332,6 +540,7 @@ views:
                 secondary_info: Target temperature Heating 10..55°C in 0.5K steps
               - entity: input_number.wpw_g03_start_internal
               - entity: input_number.wpw_g04_delta_temp_set
+              - entity: input_number.wpw_g04_delta_temp_set2
             title: Projekt Parameter Ändern
       - type: grid
         cards:
