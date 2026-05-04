@@ -6,7 +6,11 @@ frontend:
   themes: !include_dir_merge_named themes
 
 # automation: !include automations.yaml
-script: !include scripts.yaml
+automation: !include_dir_merge_list automations
+
+#script: !include scripts.yaml
+script: !include_dir_merge_named scripts
+
 scene: !include scenes.yaml
 utility_meter: !include utility_meters.yaml
 
@@ -16,7 +20,7 @@ tts:
   - platform: google_translate
     language: "de" # Für deutsche Sprache
 homeassistant:
-  packages: !include_dir_named integrations
+  packages: !include_dir_named packages
   customize: !include customize.yaml
 
 automation: !include_dir_named automations  
@@ -24,3 +28,11 @@ automation: !include_dir_named automations
 template: !include templates.yaml
 
 switch: !include_dir_merge_list switches
+# Python Scripts aktivieren
+#python_script:
+
+# pyscript aktivieren
+#pyscript:
+#  allow_all_imports: true
+#  hass_is_global: true
+

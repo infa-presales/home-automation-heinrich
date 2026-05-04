@@ -1,0 +1,25 @@
+influxdb:
+  max_retries: 3
+  default_measurement: state
+  measurement_attr: entity_id
+  # Wir lassen include_attributes weg, da es ungültig ist.
+  # Stattdessen nutzen wir ignore_attributes für die "Großverbraucher" an Speicherplatz.
+  ignore_attributes:
+    - icon
+    - friendly_name
+    - editable
+    - restored
+    - supported_features
+    - device_class
+    - state_class
+    - entity_picture
+    - friendly_name_str # Wichtig, da InfluxDB oft _str anhängt
+  exclude:
+    entity_globs:
+      - switch.*
+      - todo.*
+      - tts.*
+      - update.*
+      - device_tracker.*
+      - lock.*
+      - media_player.*
