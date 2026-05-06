@@ -167,7 +167,12 @@ input_boolean:
     name: "WPW PMD Auxiliary Valve Initial Opening"
   wpw_pmd_expansion_valve_initial_opening:
     name: "WPW PMD Expansion Valve Initial Opening"
-
+  wpw_target_parm_edit_mode:
+    name: "WPW Target Param Edit Mode"
+    icon: mdi:lock-open-variant
+  wpw_project_parm_edit_mode:
+    name: "WPW Projekt Param Edit Mode"
+    icon: mdi:lock-open-variant
 # Automatisierungen für die neuen Parameter
 automation:
   # Bestehende Automatisierungen...
