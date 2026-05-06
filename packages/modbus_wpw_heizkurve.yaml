@@ -238,4 +238,3 @@ script:
             unit: 1,
             value: "{{ (states('input_number.wpw_curve_temp4') | float(0) * 2) | int }}",
           }
-

@@ -5,17 +5,16 @@ modbus:
     port: !secret wpw_modbus_port
     delay: 5
     timeout: 10
-
     sensors:
       - name: MB WPW COP
         unique_id: mb_wpw_cop
         device_address: !secret wpw_modbus_slave
-        address: 0x1 #
+        address: 0x1
         input_type: holding
         scale: 0.1
         precision: 1
         unit_of_measurement: ""
-        #        data_type: int16
+        data_type: int16
         scan_interval: 30
 
 input_number:
@@ -25,49 +24,84 @@ input_number:
     min: 10
     max: 55
     step: 0.5
-
   wpw_p02_cooling_setp:
     name: "WPW P01 Cooling Setpoint"
     initial: 20
     min: 12
     max: 30
     step: 0.5
-
   wpw_p03_temp_diff:
     name: "WPW P03 Temp Diff"
     initial: 2
     min: 2
     max: 18
     step: 1
-
   wpw_p04_hotwater_setp:
     name: "WPW P04 Hotwater Setp"
     initial: 35
     min: 10
     max: 55
     step: 0.5
-
   wpw_p05_temp_diff:
     name: "WPW P05 Temp Diff"
     initial: 2
     min: 2
     max: 18
     step: 1
-
+  wpw_f39_ac_const_temp_diff:
+    name: WPW F39 AC Const Temp Diff
+    initial: 2
+    min: 0
+    max: 10
+    step: 1
+  wpw_f40_wt_const_temp_diff:
+    name: WPW F40 WT Const Temp Diff
+    initial: 0
+    min: 0
+    max: 10
+    step: 1
+  wpw_f42_wasser_temp_diff:
+    name: WPW F42 Wasser Temp Diff
+    initial: 0
+    min: 0
+    max: 10
+    step: 1
+  wpw_f43_inlet_temp_diff:
+    name: WPW F43 Inlet Temp Diff
+    initial: 0
+    min: 0
+    max: 10
+    step: 1
+  wpw_f44_temp_calibration:
+    name: WPW F44 Temp Calibration
+    initial: 2
+    min: 0
+    max: 3
+    step: 0.1
+  wpw_f45_inlet_temp_calibration:
+    name: WPW F45 Inlet Temp Calibration
+    initial: 0
+    min: 0
+    max: 3
+    step: 0.1
+  wpw_f46_outlet_temp_calibration:
+    name: WPW F46 Outlet Temp Calibration
+    initial: 1
+    min: 0
+    max: 3
+    step: 0.1
   wpw_g03_start_internal:
     name: WPW G03 Start Internal
     initial: 5
     min: 1
     max: 120
     step: 1
-
   wpw_g04_delta_temp_set:
     name: WPW G04 Delta Temp Set
     initial: 5
     min: 1
     max: 30
     step: 1
-
   wpw_g04_delta_temp_set2:
     name: WPW G04 Delta Temp Set2
     initial: 5
@@ -75,59 +109,7 @@ input_number:
     max: 30
     step: 1
 
-  wpw_f39_ac_const_temp_diff:
-    name: WPW F39 AC Const Temp Diff
-    initial: 2
-    min: 0
-    max: 10
-    step: 1
-
-  wpw_f40_wt_const_temp_diff:
-    name: WPW F40 WT Const Temp Diff
-    initial: 0
-    min: 0
-    max: 10
-    step: 1
-
-  wpw_f42_wasser_temp_diff:
-    name: WPW F42 Wasser Temp Diff
-    initial: 0
-    min: 0
-    max: 10
-    step: 1
-
-  wpw_f43_inlet_temp_diff:
-    name: WPW F43 Inlet Temp Diff
-    initial: 0
-    min: 0
-    max: 10
-    step: 1
-
-  wpw_f44_temp_calibration:
-    name: WPW F44 Temp Calibration
-    initial: 2
-    min: 0
-    max: 3
-    step: 0.1
-
-  wpw_f45_inlet_temp_calibration:
-    name: WPW F45 Inlet Temp Calibration
-    initial: 0
-    min: 0
-    max: 3
-    step: 0.1
-
-  wpw_f46_outlet_temp_calibration:
-    name: WPW F46 Outlet Temp Calibration
-    initial: 1
-    min: 0
-    max: 3
-    step: 0.1
-
 input_select:
-  # Bestehende input_number Einträge...
-
-  # Neue Input-Selects für textbasierte Parameter
   wpw_p06_unit_mode:
     name: "WPW P06 Unit Mode"
     options:
@@ -137,7 +119,6 @@ input_select:
       - "Heating+DHW"
       - "Cooling+DHW"
     icon: mdi:heat-pump
-
   wpw_p07_fan_mode:
     name: "WPW P07 FAN Mode"
     options:
@@ -146,7 +127,6 @@ input_select:
       - "Night"
       - "Hi-COP"
     icon: mdi:fan
-
   wpw_g02_pump_work:
     name: "WPW G02 Pump Work"
     options:
@@ -156,7 +136,6 @@ input_select:
     icon: mdi:pump
 
 input_boolean:
-  # Bit-Steuerungen für Parameter Marker Definition (0x0032)
   wpw_pmd_switch:
     name: "WPW PMD Switch On/Off"
   wpw_pmd_main_valve_selection:
@@ -167,291 +146,298 @@ input_boolean:
     name: "WPW PMD Auxiliary Valve Initial Opening"
   wpw_pmd_expansion_valve_initial_opening:
     name: "WPW PMD Expansion Valve Initial Opening"
+  wpw_cm1_thermostatic_adjustment:
+    name: "WPW CM1 Thermostatic Adjustment"
+  wpw_cm1_pressure_sensor_valid:
+    name: "WPW CM1 Pressure Sensor Valid"
+  wpw_cm1_cooling_auxiliary_circuit_enable:
+    name: "WPW CM1 Cooling Auxiliary Circuit Enable"
+  wpw_cm1_auxiliary_expansion_valve_mode:
+    name: "WPW CM1 Auxiliary Expansion Valve Mode"
+  wpw_cm1_dc_fan1_selection:
+    name: "WPW CM1 DC Fan1 Selection"
+  wpw_cm1_dc_fan2_selection:
+    name: "WPW CM1 DC Fan2 Selection"
+  wpw_cm1_parameter_reset_selection:
+    name: "WPW CM1 Parameter Reset Selection"
+  wpw_cm1_lockout_fault_reset_selection:
+    name: "WPW CM1 Lockout Fault Reset Selection"
+  wpw_cm2_with_or_without_antilegionella:
+    name: "WPW CM2 With Or Without Antilegionella"
+  wpw_cm2_with_or_without_hot_water:
+    name: "WPW CM2 With Or Without Hot Water"
+  wpw_cm2_whether_the_clock_is_at_night:
+    name: "WPW CM2 Whether The Clock Is At Night"
+  wpw_cm2_load_fast_check_mode:
+    name: "WPW CM2 Load Fast Check Mode"
+  wpw_cm2_forced_defrost:
+    name: "WPW CM2 Forced Defrost"
+  wpw_cm2_with_or_without_smart_grid:
+    name: "WPW CM2 With Or Without Smart Grid"
+  wpw_cm2_smart_grid_with_or_without_electric_heater:
+    name: "WPW CM2 Smart Grid With Or Without Electric Heater"
   wpw_target_parm_edit_mode:
     name: "WPW Target Param Edit Mode"
     icon: mdi:lock-open-variant
   wpw_project_parm_edit_mode:
-    name: "WPW Projekt Param Edit Mode"
+    name: "WPW Project Param Edit Mode"
     icon: mdi:lock-open-variant
-# Automatisierungen für die neuen Parameter
-automation:
-  # Bestehende Automatisierungen...
+  wpw_cm1_param_edit_mode:
+    name: "WPW CM1 Param Edit Mode"
+    icon: mdi:lock-open-variant
+  wpw_cm2_param_edit_mode:
+    name: "WPW CM2 Param Edit Mode"
+    icon: mdi:lock-open-variant
+  wpw_demand_param_edit_mode:
+    name: "WPW Demand Param Edit Mode"
+    icon: mdi:lock-open-variant
 
-  - alias: "Update Modbus wpw_p06_unit_mode"
-    description: "Sendet den geänderten Unit Mode an Modbus"
-    mode: single
-    trigger:
-      - trigger: state
-        entity_id: input_select.wpw_p06_unit_mode
-    action:
+script:
+  wpw_project_param_reset_to_actual:
+    alias: "Project parameter auf Ist setzen"
+    sequence:
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.wpw_g02_pump_work
+        data:
+          option: >
+            {% set mode_map = { 0: "Interval", 1: "Normal", 2: "Demand" } %}
+            {{ mode_map[states('sensor.wpw_g02_pump_work') | int(1)] | default("Normal") }}
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_g03_start_internal
+        data:
+          value: "{{ states('sensor.wpw_g03_start_internal') | float(5) }}"
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_g04_delta_temp_set
+        data:
+          value: "{{ states('sensor.wpw_g04_delta_temp_set') | float(5) }}"
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_g04_delta_temp_set2
+        data:
+          value: "{{ states('sensor.wpw_g04_delta_temp_set2') | float(3) }}"
+
+  wpw_target_param_reset_to_actual:
+    alias: "Zielparameter auf Ist setzen"
+    sequence:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_p01_heating_setp
+        data:
+          value: "{{ states('sensor.wpw_p01_heating_setp') | float(27) }}"
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_p02_cooling_setp
+        data:
+          value: "{{ states('sensor.wpw_p02_cooling_setp') | float(12) }}"
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_p03_temp_diff
+        data:
+          value: "{{ states('sensor.wpw_p03_temp_diff') | float(5) }}"
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_p04_hotwater_setp
+        data:
+          value: "{{ states('sensor.wpw_p04_hotwater_setp') | float(50) }}"
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_p05_temp_diff
+        data:
+          value: "{{ states('sensor.wpw_p05_temp_diff') | float(5) }}"
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.wpw_p06_unit_mode
+        data:
+          option: >
+            {% set mode_map = { 0: "DHW", 1: "Heating", 2: "Cooling", 3: "Heating+DHW", 4: "Cooling+DHW" } %}
+            {{ mode_map[states('sensor.wpw_p06_unit_mode') | int(1)] | default("Heating") }}
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.wpw_p07_fan_mode
+        data:
+          option: >
+            {% set mode_map = { 0: "NOR", 1: "ECO", 2: "Night", 3: "Hi-COP" } %}
+            {{ mode_map[states('sensor.wpw_p07_fan_mode') | int(1)] | default("ECO") }}
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_f39_ac_const_temp_diff
+        data:
+          value: "{{ states('sensor.wpw_f39_ac_const_temp_diff') | float(2) }}"
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_f40_wt_const_temp_diff
+        data:
+          value: "{{ states('sensor.wpw_f40_wt_const_temp_diff') | float(0) }}"
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_f42_wasser_temp_diff
+        data:
+          value: "{{ states('sensor.wpw_f42_wasser_temp_diff') | float(5) }}"
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_f43_inlet_temp_diff
+        data:
+          value: "{{ states('sensor.wpw_f43_inlet_temp_diff') | float(5) }}"
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_f44_temp_calibration
+        data:
+          value: "{{ states('sensor.wpw_f44_temp_calibration') | float(0.2) }}"
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_f45_inlet_temp_calibration
+        data:
+          value: "{{ states('sensor.wpw_f45_inlet_temp_calibration') | float(0) }}"
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_f46_outlet_temp_calibration
+        data:
+          value: "{{ states('sensor.wpw_f46_outlet_temp_calibration') | float(0.1) }}"
+
+  wpw_send_project_param:
+    alias: "Project Parameter an WP übertragen"
+    sequence:
       - action: modbus.write_register
-        data_template:
+        data:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
-          address: 0x36
+          address: 414 # 0x19E
           value: >
-            {% set mode_map = {
-              "DHW": 0,
-              "Heating": 1,
-              "Cooling": 2,
-              "Heating+DHW": 3,
-              "Cooling+DHW": 4
-            } %}
-            {{ mode_map[states('input_select.wpw_p06_unit_mode')] }}
-
-  - alias: "Update Modbus wpw_p07_fan_mode"
-    description: "Sendet den geänderten Fan Mode an Modbus"
-    mode: single
-    trigger:
-      - trigger: state
-        entity_id: input_select.wpw_p07_fan_mode
-    action:
+            {% set mode_map = { "Interval": 0, "Normal": 1, "Demand": 2 } %}
+            {{ mode_map[states('input_select.wpw_g02_pump_work')] | default(1) }}
       - action: modbus.write_register
-        data_template:
+        data:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
-          address: 0x190
-          value: >
-            {% set mode_map = {
-              "NOR": 0,
-              "ECO": 1,
-              "Night": 2,
-              "Hi-COP": 3
-            } %}
-            {{ mode_map[states('input_select.wpw_p07_fan_mode')] }}
-
-  - alias: "Update Modbus wpw_g02_pump_work"
-    description: "Sendet den geänderten Pump Work Mode an Modbus"
-    mode: single
-    trigger:
-      - trigger: state
-        entity_id: input_select.wpw_g02_pump_work
-    action:
-      - action: modbus.write_register
-        data_template:
-          hub: wpw_modbus
-          slave: !secret wpw_modbus_slave
-          address: 0x19E
-          value: >
-            {% set mode_map = {
-              "Interval": 0,
-              "Normal": 1,
-              "Demand": 2
-            } %}
-            {{ mode_map[states('input_select.wpw_g02_pump_work')] }}
-  - alias: "Update Modbus wpwp01_heating_setp"
-    description: "Sendet den geänderten Wert des Heating Setpoints an Modbus"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_p01_heating_setp
-    actions:
-      - action: modbus.write_register
-        data_template:
-          hub: wpw_modbus
-          slave: !secret wpw_modbus_slave
-          address: 0xCC #
-          value: "{{ states('input_number.wpw_p01_heating_setp') |  multiply(2) | int }}"
-
-  - alias: "Update Modbus wpw_p02_cooling_setp"
-    description: "Sendet den geänderten Wert des Heating Setpoints an Modbus"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_p02_cooling_setp
-    actions:
-      - action: modbus.write_register
-        data_template:
-          hub: wpw_modbus
-          slave: !secret wpw_modbus_slave
-          address: 0xCB #
-          value: "{{ states('input_number.wpw_p02_cooling_setp')| multiply(2) | int }}"
-
-  - alias: "Update Modbus wpw_p03_temp_diff"
-    description: "Sendet den geänderten Wert des Heating Setpoints an Modbus"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_p03_temp_diff
-    actions:
-      - action: modbus.write_register
-        data_template:
-          hub: wpw_modbus
-          slave: !secret wpw_modbus_slave
-          address: 0xC6 #
-          value: "{{ states('input_number.wpw_p03_temp_diff') }}"
-
-  - alias: "Update Modbus wpw_p04_hotwater_setp"
-    description: "Sendet den geänderten Wert des Heating Setpoints an Modbus"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_p04_hotwater_setp
-    actions:
-      - action: modbus.write_register
-        data_template:
-          hub: wpw_modbus
-          slave: !secret wpw_modbus_slave
-          address: 0xCA #
-          value: "{{ states('input_number.wpw_p04_hotwater_setp') | multiply(2) | int }}"
-
-  - alias: "Update Modbus wpw_p05_temp_diff"
-    description: "Sendet den geänderten Wert des Heating Setpoints an Modbus"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_p05_temp_diff
-    actions:
-      - action: modbus.write_register
-        data_template:
-          hub: wpw_modbus
-          slave: !secret wpw_modbus_slave
-          address: 0xC8 #
-          value: "{{ states('input_number.wpw_p05_temp_diff')  }}"
-
-  - alias: "Update Modbus wpw_g03_start_internal"
-    description: "Sendet den geänderten Wert des G03 Start Internal"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_g03_start_internal
-    actions:
-      - action: modbus.write_register
-        data_template:
-          hub: wpw_modbus
-          slave: !secret wpw_modbus_slave
-          address: 0x0185 #
+          address: 389 # 0x0185
           value: "{{ states('input_number.wpw_g03_start_internal') | int }}"
-
-  - alias: "Update Modbus wpw_g04_delta_temp_set"
-    description: "Sendet den geänderten Wert des G04 Delta Temp Set"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_g04_delta_temp_set
-    actions:
       - action: modbus.write_register
-        data_template:
+        data:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
-          address: 0x018D #
+          address: 397 # 0x018D
           value: "{{ states('input_number.wpw_g04_delta_temp_set') | int }}"
-
-  - alias: "Update Modbus wpw_g04_delta_temp_set2"
-    description: "Sendet den geänderten Wert des G04 Delta Temp Set2"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_g04_delta_temp_set2
-    actions:
       - action: modbus.write_register
-        data_template:
+        data:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
-          address: 0x00DD #
+          address: 221 # 0x00DD
           value: "{{ states('input_number.wpw_g04_delta_temp_set2') | int }}"
 
-  - alias: "Update Modbus wpw_f39_ac_const_temp_diff"
-    description: "Sendet den geänderten Wert des F39 AC Const Temp"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_f39_ac_const_temp_diff
-    actions:
+  wpw_send_target_param:
+    alias: "Target Parameter an WP übertragen"
+    sequence:
       - action: modbus.write_register
-        data_template:
+        data:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
-          address: 0x00C7 #
+          address: 204 # 0xCC
+          value: "{{ (states('input_number.wpw_p01_heating_setp') | float * 2) | int }}"
+      - action: modbus.write_register
+        data:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 203 # 0xCB
+          value: "{{ (states('input_number.wpw_p02_cooling_setp') | float * 2) | int }}"
+      - action: modbus.write_register
+        data:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 198 # 0xC6
+          value: "{{ states('input_number.wpw_p03_temp_diff') | int }}"
+      - action: modbus.write_register
+        data:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 202 # 0xCA
+          value: "{{ (states('input_number.wpw_p04_hotwater_setp') | float * 2) | int }}"
+      - action: modbus.write_register
+        data:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 200 # 0xC8
+          value: "{{ states('input_number.wpw_p05_temp_diff') | int }}"
+      - action: modbus.write_register
+        data:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 54 # 0x36
+          value: >
+            {% set mode_map = { "DHW": 0, "Heating": 1, "Cooling": 2, "Heating+DHW": 3, "Cooling+DHW": 4 } %}
+            {{ mode_map[states('input_select.wpw_p06_unit_mode')] | default(1) }}
+      - action: modbus.write_register
+        data:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 400 # 0x190
+          value: >
+            {% set mode_map = { "NOR": 0, "ECO": 1, "Night": 2, "Hi-COP": 3 } %}
+            {{ mode_map[states('input_select.wpw_p07_fan_mode')] | default(1) }}
+      - action: modbus.write_register
+        data:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 199 # 0x00C7
           value: "{{ states('input_number.wpw_f39_ac_const_temp_diff') | int }}"
-
-  - alias: "Update Modbus wpw_f40_wt_const_temp_diff"
-    description: "Sendet den geänderten Wert des F40 WT Const Temp"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_f40_wt_const_temp_diff
-    actions:
       - action: modbus.write_register
-        data_template:
+        data:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
-          address: 0x00C9 #
+          address: 201 # 0x00C9
           value: "{{ states('input_number.wpw_f40_wt_const_temp_diff') | int }}"
-
-  - alias: "Update Modbus wpw_f42_wasser_temp_diff"
-    description: "Sendet den geänderten Wert des WPW F42 Wasser Temp Diff"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_f42_wasser_temp_diff
-    actions:
       - action: modbus.write_register
-        data_template:
+        data:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
-          address: 0x00D2 #
+          address: 210 # 0x00D2
           value: "{{ states('input_number.wpw_f42_wasser_temp_diff') | int }}"
-
-  - alias: "Update Modbus wpw_f43_inlet_temp_diff"
-    description: "Sendet den geänderten Wert des WPW F43 Inlet Temp Diff"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_f43_inlet_temp_diff
-    actions:
       - action: modbus.write_register
-        data_template:
+        target: {}
+        data:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
-          address: 0x00D3 #
+          address: 211 # 0x00D3
           value: "{{ states('input_number.wpw_f43_inlet_temp_diff') | int }}"
-
-  - alias: "Update Modbus wpw_f44_temp_calibration"
-    description: "Sendet den geänderten Wert des F44 Temp Calibration"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_f44_temp_calibration
-    actions:
       - action: modbus.write_register
-        data_template:
+        data:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
-          address: 0x00CD #
-          value: "{{ states('input_number.wpw_f44_temp_calibration')| multiply(10) | int }}"
-
-  - alias: "Update Modbus wpw_f45_inlet_temp_calibration"
-    description: "Sendet den geänderten Wert des F45 Inlet Temp Calibration"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_f45_inlet_temp_calibration
-    actions:
+          address: 205 # 0x00CD
+          value: "{{ (states('input_number.wpw_f44_temp_calibration') | float * 10) | int }}"
       - action: modbus.write_register
-        data_template:
+        data:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
-          address: 0x00CE #
-          value: "{{ states('input_number.wpw_f45_inlet_temp_calibration')| multiply(10) | int }}"
-
-  - alias: "Update Modbus wpw_f46_outlet_temp_calibration"
-    description: "Sendet den geänderten Wert des F46 Outlet Temp Calibration"
-    mode: single
-    triggers:
-      - trigger: state
-        entity_id: input_number.wpw_f46_outlet_temp_calibration
-    actions:
+          address: 206 # 0x00CE
+          value: "{{ (states('input_number.wpw_f45_inlet_temp_calibration') | float * 10) | int }}"
       - action: modbus.write_register
-        data_template:
+        data:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
-          address: 0x00CF #
-          value: "{{ states('input_number.wpw_f46_outlet_temp_calibration') | multiply(10) | int }}"
+          address: 207 # 0x00CF
+          value: "{{ (states('input_number.wpw_f46_outlet_temp_calibration') | float * 10) | int }}"
 
-  # Schreibe gesamtes Register wenn sich ein Bit ändert
+automation:
+  - alias: "WPW: Sync Edit Mode on target param"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.wpw_target_parm_edit_mode
+        to: "on"
+    action:
+      - action: script.wpw_target_param_reset_to_actual
+
+  - alias: "WPW: Sync Edit Mode on project param"
+    trigger:
+      - platform: state
+        entity_id: input_boolean.wpw_project_parm_edit_mode
+        to: "on"
+    action:
+      - action: script.wpw_project_param_reset_to_actual
+
   - alias: "Write Parameter Marker Definition Register"
-    description: "Schreibt alle Bits in PMD Register"
     mode: single
     trigger:
       - trigger: state
@@ -463,10 +449,10 @@ automation:
           - input_boolean.wpw_pmd_expansion_valve_initial_opening
     action:
       - action: modbus.write_register
-        data_template:
+        data:
           hub: wpw_modbus
           slave: !secret wpw_modbus_slave
-          address: 0x32
+          address: 50 # 0x32
           value: >
             {% set bit0 = 1 if is_state('input_boolean.wpw_pmd_switch', 'on') else 0 %}
             {% set bit1 = 2 if is_state('input_boolean.wpw_pmd_main_valve_selection', 'on') else 0 %}
