@@ -1,0 +1,241 @@
+modbus:
+  - name: wpw_modbus
+    type: tcp
+    host: !secret wpw_modbus_host_ip
+    port: !secret wpw_modbus_port
+    delay: 5
+    timeout: 10
+    sensors:
+      - name: "WPW E13 Economic Heat Temp1"
+        address: 373
+        scale: 0.5
+        precision: 1
+        unit_of_measurement: "°C"
+      - name: "WPW E14 Economic Heat Temp2"
+        address: 374
+        scale: 0.5
+        precision: 1
+        unit_of_measurement: "°C"
+      - name: "WPW E15 Economic Heat Temp3"
+        address: 375
+        scale: 0.5
+        precision: 1
+        unit_of_measurement: "°C"
+      - name: "WPW E16 Economic Heat Temp4"
+        address: 376
+        scale: 0.5
+        precision: 1
+        unit_of_measurement: "°C"
+
+input_boolean:
+  wpw_kurve_edit_mode:
+    name: "WPW Kurve Edit Mode"
+    icon: mdi:lock-open-variant
+
+template:
+  - sensor:
+      - name: "WPW Effektive VL Temperatur"
+        unit_of_measurement: "°C"
+        state_class: measurement
+        state: >
+          {% set fan_mode = states('sensor.wpw_p07_fan_mode') | int(0) %}
+          {% if fan_mode != 1 %}
+            {{ states('sensor.wpw_p01_heating_setp') | float(0) | round(1) }}
+          {% else %}
+            {% set x = states('sensor.wpw_ambient_temperature') | float(0) %}
+            {% set x1 = states('input_number.wpw_curve_amb1') | float(0) %}
+            {% set x2 = states('input_number.wpw_curve_amb2') | float(0) %}
+            {% set x3 = states('input_number.wpw_curve_amb3') | float(0) %}
+            {% set x4 = states('input_number.wpw_curve_amb4') | float(0) %}
+            {% set y1 = states('input_number.wpw_curve_temp1') | float(0) %}
+            {% set y2 = states('input_number.wpw_curve_temp2') | float(0) %}
+            {% set y3 = states('input_number.wpw_curve_temp3') | float(0) %}
+            {% set y4 = states('input_number.wpw_curve_temp4') | float(0) %}
+            {% if x <= x2 %}
+              {% set val = y1 + (x - x1) * ((y2 - y1) / (x2 - x1)) if (x2 - x1) != 0 else y1 %}
+            {% elif x <= x3 %}
+              {% set val = y2 + (x - x2) * ((y3 - y2) / (x3 - x2)) if (x3 - x2) != 0 else y2 %}
+            {% else %}
+              {% set val = y3 + (x - x3) * ((y4 - y3) / (x4 - x3)) if (x4 - x3) != 0 else y3 %}
+            {% endif %}
+            {{ ((val * 2) | round(0) / 2) | clamp(10, 55) }}
+          {% endif %}
+
+input_number:
+  wpw_curve_amb1:
+    name: "E01 Außen Min"
+    min: -30
+    max: 20
+    step: 1
+    unit_of_measurement: "°C"
+    initial: -15
+  wpw_curve_amb2:
+    name: "E02 Außen"
+    min: -30
+    max: 20
+    step: 0.1
+    unit_of_measurement: "°C"
+    initial: -5
+  wpw_curve_amb3:
+    name: "E03 Außen Pivot"
+    min: -30
+    max: 30
+    step: 0.1
+    unit_of_measurement: "°C"
+    initial: 7
+  wpw_curve_amb4:
+    name: "E04 Außen Max"
+    min: -30
+    max: 30
+    step: 1
+    unit_of_measurement: "°C"
+    initial: 18
+  wpw_curve_temp1:
+    name: "E13 Vorlauf 1"
+    min: 10
+    max: 55
+    step: 0.5
+    unit_of_measurement: "°C"
+    initial: 45
+  wpw_curve_temp2:
+    name: "E14 Vorlauf 2"
+    min: 10
+    max: 55
+    step: 0.5
+    unit_of_measurement: "°C"
+    initial: 38
+  wpw_curve_temp3:
+    name: "E15 Vorlauf 3"
+    min: 10
+    max: 55
+    step: 0.5
+    unit_of_measurement: "°C"
+    initial: 30
+  wpw_curve_temp4:
+    name: "E16 Vorlauf 4"
+    min: 10
+    max: 55
+    step: 0.5
+    unit_of_measurement: "°C"
+    initial: 25
+  wpw_curve_slope:
+    name: "Heizkurve Steilheit"
+    min: 0.1
+    max: 3.0
+    step: 0.1
+    initial: 0.5
+
+automation:
+  - id: wpw_curve_global_trigger
+    alias: "WPW: Master Update (Vorschau)"
+    trigger:
+      - platform: state
+        entity_id:
+          - input_number.wpw_curve_slope
+          - input_number.wpw_curve_temp3
+          - input_number.wpw_curve_amb1
+          - input_number.wpw_curve_amb4
+    action:
+      - action: script.wpw_calc_engine
+
+script:
+  wpw_calc_engine:
+    alias: "Berechnung Vorschau"
+    sequence:
+      - variables:
+          m_a: "{{ states('input_number.wpw_curve_amb1') | float(0) }}"
+          x_a: "{{ states('input_number.wpw_curve_amb4') | float(0) }}"
+          p_a: "{{ states('input_number.wpw_curve_amb3') | float(0) }}"
+          p_t: "{{ states('input_number.wpw_curve_temp3') | float(0) }}"
+          slp: "{{ states('input_number.wpw_curve_slope') | float(0) }}"
+          step_a: "{{ (x_a - m_a) / 3 }}"
+      - action: input_number.set_value
+        target: { entity_id: input_number.wpw_curve_amb2 }
+        data: { value: "{{ (m_a + step_a) | round(1) }}" }
+      - action: input_number.set_value
+        target: { entity_id: input_number.wpw_curve_amb3 }
+        data: { value: "{{ (m_a + 2 * step_a) | round(1) }}" }
+      - delay: "00:00:00.100"
+      - action: input_number.set_value
+        target: { entity_id: input_number.wpw_curve_temp1 }
+        data:
+          {
+            value: "{{ (((p_t + (p_a - m_a) * slp) * 2) | round(0) / 2) | clamp(10, 55) }}",
+          }
+      - action: input_number.set_value
+        target: { entity_id: input_number.wpw_curve_temp2 }
+        data:
+          {
+            value: "{{ (((p_t + (p_a - (m_a + step_a)) * slp) * 2) | round(0) / 2) | clamp(10, 55) }}",
+          }
+      - action: input_number.set_value
+        target: { entity_id: input_number.wpw_curve_temp4 }
+        data:
+          {
+            value: "{{ (((p_t + (p_a - x_a) * slp) * 2) | round(0) / 2) | clamp(10, 55) }}",
+          }
+
+  wpw_reset_to_actual:
+    alias: "Änderungen verwerfen"
+    sequence:
+      - action: input_number.set_value
+        target: { entity_id: input_number.wpw_curve_temp1 }
+        data:
+          {
+            value: "{{ states('sensor.wpw_e13_economic_heat_ambi1') | float(45) }}",
+          }
+      - action: input_number.set_value
+        target: { entity_id: input_number.wpw_curve_temp2 }
+        data:
+          {
+            value: "{{ states('sensor.wpw_e14_economic_heat_ambi2') | float(38) }}",
+          }
+      - action: input_number.set_value
+        target: { entity_id: input_number.wpw_curve_temp3 }
+        data:
+          {
+            value: "{{ states('sensor.wpw_e15_economic_heat_ambi3') | float(30) }}",
+          }
+      - action: input_number.set_value
+        target: { entity_id: input_number.wpw_curve_temp4 }
+        data:
+          {
+            value: "{{ states('sensor.wpw_e16_economic_heat_ambi4') | float(25) }}",
+          }
+
+  wpw_send_heating_curve:
+    alias: "Heizkurve an WP übertragen"
+    sequence:
+      - action: modbus.write_register
+        data:
+          {
+            hub: wpw_modbus,
+            address: 373,
+            unit: 1,
+            value: "{{ (states('input_number.wpw_curve_temp1') | float(0) * 2) | int }}",
+          }
+      - action: modbus.write_register
+        data:
+          {
+            hub: wpw_modbus,
+            address: 374,
+            unit: 1,
+            value: "{{ (states('input_number.wpw_curve_temp2') | float(0) * 2) | int }}",
+          }
+      - action: modbus.write_register
+        data:
+          {
+            hub: wpw_modbus,
+            address: 375,
+            unit: 1,
+            value: "{{ (states('input_number.wpw_curve_temp3') | float(0) * 2) | int }}",
+          }
+      - action: modbus.write_register
+        data:
+          {
+            hub: wpw_modbus,
+            address: 376,
+            unit: 1,
+            value: "{{ (states('input_number.wpw_curve_temp4') | float(0) * 2) | int }}",
+          }
+
