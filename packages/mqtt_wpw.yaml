@@ -857,6 +857,12 @@ mqtt:
       unit_of_measurement: ""
       state_class: "measurement"
 
+    - name: "WPW PMD Register"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['ParameterMarkerDefinition']['value'] }}"
+      unit_of_measurement: ""
+      state_class: "measurement"
+
     - name: "WPW PMD Switch"
       state_topic: "WP/status/Wohnhaus"
       value_template: "{{ value_json['PMDSwitch']['value'] }}"
@@ -875,6 +881,18 @@ mqtt:
       unit_of_measurement: ""
       state_class: "measurement"
 
+    - name: "WPW PMD Bit3 Reserved"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['PMDBit3Reserved']['value'] }}"
+      unit_of_measurement: ""
+      state_class: "measurement"
+
+    - name: "WPW PMD Bit4 Reserved"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['PMDBit4Reserved']['value'] }}"
+      unit_of_measurement: ""
+      state_class: "measurement"
+
     - name: "WPW PMD Auxiliary Valve Initial Opening Selection"
       state_topic: "WP/status/Wohnhaus"
       value_template: "{{ value_json['PMDAuxiliaryValveInitialOpeningSelection']['value'] }}"
@@ -884,6 +902,18 @@ mqtt:
     - name: "WPW PMD Expansion Valve Initial Opening Selection"
       state_topic: "WP/status/Wohnhaus"
       value_template: "{{ value_json['PMDExpansionValveInitialOpeningSelection']['value'] }}"
+      unit_of_measurement: ""
+      state_class: "measurement"
+
+    - name: "WPW PMD Bit7 Reserved"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['PMDBit7Reserved']['value'] }}"
+      unit_of_measurement: ""
+      state_class: "measurement"
+
+    - name: "WPW CM1 Register"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['ControlMark1']['value'] }}"
       unit_of_measurement: ""
       state_class: "measurement"
 
@@ -935,6 +965,12 @@ mqtt:
       unit_of_measurement: ""
       state_class: "measurement"
 
+    - name: "WPW CM2 Register"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['ControlMark2']['value'] }}"
+      unit_of_measurement: ""
+      state_class: "measurement"
+
     - name: "WPW CM2 With Or Without Antilegionella"
       state_topic: "WP/status/Wohnhaus"
       value_template: "{{ value_json['CM2WithOrWithoutAntilegionella']['value'] }}"
@@ -962,6 +998,12 @@ mqtt:
     - name: "WPW CM2 Forced Defrost"
       state_topic: "WP/status/Wohnhaus"
       value_template: "{{ value_json['CM2ForcedDefrost']['value'] }}"
+      unit_of_measurement: ""
+      state_class: "measurement"
+
+    - name: "WPW CM2 Bit5 Reserved"
+      state_topic: "WP/status/Wohnhaus"
+      value_template: "{{ value_json['CM2Bit5Reserved']['value'] }}"
       unit_of_measurement: ""
       state_class: "measurement"
 

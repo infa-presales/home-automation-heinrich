@@ -14,7 +14,6 @@ script: !include_dir_merge_named scripts
 scene: !include scenes.yaml
 utility_meter: !include utility_meters.yaml
 
-
 # Added by dwerner !env_var
 tts:
   - platform: google_translate
@@ -23,7 +22,6 @@ homeassistant:
   packages: !include_dir_named packages
   customize: !include customize.yaml
 
-automation: !include_dir_named automations  
 #template: !include_dir_named templates
 template: !include templates.yaml
 

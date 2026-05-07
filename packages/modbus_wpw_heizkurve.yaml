@@ -60,6 +60,29 @@ template:
             {% endif %}
             {{ ((val * 2) | round(0) / 2) | clamp(10, 55) }}
           {% endif %}
+      # Heizkurventemperatur    
+      - name: "WPW Heizkurve VL Temperatur"
+        unit_of_measurement: "°C"
+        state_class: measurement
+        state: >
+          # {% set x = states('sensor.wpw_ambient_temperature') | float(0) %}
+          {% set x = states('sensor.openweathermap_temperature') | float(0) %}
+          {% set x1 = states('input_number.wpw_curve_amb1') | float(0) %}
+          {% set x2 = states('input_number.wpw_curve_amb2') | float(0) %}
+          {% set x3 = states('input_number.wpw_curve_amb3') | float(0) %}
+          {% set x4 = states('input_number.wpw_curve_amb4') | float(0) %}
+          {% set y1 = states('input_number.wpw_curve_temp1') | float(0) %}
+          {% set y2 = states('input_number.wpw_curve_temp2') | float(0) %}
+          {% set y3 = states('input_number.wpw_curve_temp3') | float(0) %}
+          {% set y4 = states('input_number.wpw_curve_temp4') | float(0) %}
+          {% if x <= x2 %}
+            {% set val = y1 + (x - x1) * ((y2 - y1) / (x2 - x1)) if (x2 - x1) != 0 else y1 %}
+          {% elif x <= x3 %}
+            {% set val = y2 + (x - x2) * ((y3 - y2) / (x3 - x2)) if (x3 - x2) != 0 else y2 %}
+          {% else %}
+            {% set val = y3 + (x - x3) * ((y4 - y3) / (x4 - x3)) if (x4 - x3) != 0 else y3 %}
+          {% endif %}
+          {{ ((val * 2) | round(0) / 2) | clamp(10, 55) }}
 
 input_number:
   wpw_curve_amb1:
