@@ -911,9 +911,15 @@ mqtt:
       unit_of_measurement: ""
       state_class: "measurement"
 
+    # - name: "WPW CM1 Register"
+    #   state_topic: "WP/status/Wohnhaus"
+    #   value_template: "{{ value_json['ControlMark1']['value'] }}"
+    #   unit_of_measurement: ""
+    #   state_class: "measurement"
+
     - name: "WPW CM1 Register"
       state_topic: "WP/status/Wohnhaus"
-      value_template: "{{ value_json['ControlMark1']['value'] }}"
+      value_template: "{{ value_json.ControlMark1.value | int(0) }}"
       unit_of_measurement: ""
       state_class: "measurement"
 
@@ -1133,23 +1139,23 @@ template:
         unique_id: wpw_os1_compressor
         state: "{{ states('sensor.wpw_output_symbol1_compressor_status') }}"
 
-
   - sensor:
-    - device_class: temperature
-      unit_of_measurement: °C
-      default_entity_id: sensor.owm_temperature_hourly_fixed
-      name: OWM Temperature Hourly Fixed Mean
-      state: "{% set start_time = now().replace(minute=0, second=0, microsecond=0) -
-        timedelta(hours=1) %} {% set end_time = now().replace(minute=0, second=0, microsecond=0)
-        %} {% set history_data = state_attr('sensor.openweathermap_temperature', 'history')
-        %} {% if history_data %}\n  {% set relevant_states = history_data | selectattr('last_updated',
-        '>=', as_timestamp(start_time)) | selectattr('last_updated', '<', as_timestamp(end_time))
-        | list %}\n  {% if relevant_states %}\n    {% set values = relevant_states |
-        map(attribute='state') | map('float') | list %}\n    {{ (values | sum / values
-        | count) | round(1) }}\n  {% else %}\n    {{ states('sensor.openweathermap_temperature')
-        | float | round(1) }}\n  {% endif %}\n{% else %}\n  {{ states('sensor.openweathermap_temperature')
-        | float | round(1) }}\n{% endif %}"
-        #
+      - device_class: temperature
+        unit_of_measurement: °C
+        default_entity_id: sensor.owm_temperature_hourly_fixed
+        name: OWM Temperature Hourly Fixed Mean
+        state:
+          "{% set start_time = now().replace(minute=0, second=0, microsecond=0) -
+          timedelta(hours=1) %} {% set end_time = now().replace(minute=0, second=0, microsecond=0)
+          %} {% set history_data = state_attr('sensor.openweathermap_temperature', 'history')
+          %} {% if history_data %}\n  {% set relevant_states = history_data | selectattr('last_updated',
+          '>=', as_timestamp(start_time)) | selectattr('last_updated', '<', as_timestamp(end_time))
+          | list %}\n  {% if relevant_states %}\n    {% set values = relevant_states |
+          map(attribute='state') | map('float') | list %}\n    {{ (values | sum / values
+          | count) | round(1) }}\n  {% else %}\n    {{ states('sensor.openweathermap_temperature')
+          | float | round(1) }}\n  {% endif %}\n{% else %}\n  {{ states('sensor.openweathermap_temperature')
+          | float | round(1) }}\n{% endif %}"
+          #
 # Filter Sensoren und History Stats bleiben wie bisher
 sensor:
   #  - platform: filter

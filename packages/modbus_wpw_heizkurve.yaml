@@ -31,9 +31,38 @@ input_boolean:
   wpw_kurve_edit_mode:
     name: "WPW Kurve Edit Mode"
     icon: mdi:lock-open-variant
+  wpw_dynamic_vl_temp_mode:
+    name: "WPW Dynamic VL Temp Mode"
+    icon: mdi:lock-open-variant
+    initial: true
 
 template:
   - sensor:
+      # Heizkurventemperatur
+      - name: "WPW Dynamic VL Temperature"
+        unique_id: wpw_dynamic_vl_temperature
+        unit_of_measurement: "°C"
+        state_class: measurement
+        state: >
+          {# set x = states('sensor.wpw_ambient_temperature') | float(0) #}
+          {% set x = states('sensor.openweathermap_temperature') | float(0) %}
+          {% set x1 = states('input_number.wpw_curve_amb1') | float(0) %}
+          {% set x2 = states('input_number.wpw_curve_amb2') | float(0) %}
+          {% set x3 = states('input_number.wpw_curve_amb3') | float(0) %}
+          {% set x4 = states('input_number.wpw_curve_amb4') | float(0) %}
+          {% set y1 = states('input_number.wpw_curve_temp1') | float(0) %}
+          {% set y2 = states('input_number.wpw_curve_temp2') | float(0) %}
+          {% set y3 = states('input_number.wpw_curve_temp3') | float(0) %}
+          {% set y4 = states('input_number.wpw_curve_temp4') | float(0) %}
+          {% if x <= x2 %}
+            {% set val = y1 + (x - x1) * ((y2 - y1) / (x2 - x1)) if (x2 - x1) != 0 else y1 %}
+          {% elif x <= x3 %}
+            {% set val = y2 + (x - x2) * ((y3 - y2) / (x3 - x2)) if (x3 - x2) != 0 else y2 %}
+          {% else %}
+            {% set val = y3 + (x - x3) * ((y4 - y3) / (x4 - x3)) if (x4 - x3) != 0 else y3 %}
+          {% endif %}
+          {{ ((val * 2) | round(0) / 2) | clamp(10, 55) }}
+
       - name: "WPW Effektive VL Temperatur"
         unit_of_measurement: "°C"
         state_class: measurement
@@ -60,29 +89,6 @@ template:
             {% endif %}
             {{ ((val * 2) | round(0) / 2) | clamp(10, 55) }}
           {% endif %}
-      # Heizkurventemperatur    
-      - name: "WPW Heizkurve VL Temperatur"
-        unit_of_measurement: "°C"
-        state_class: measurement
-        state: >
-          # {% set x = states('sensor.wpw_ambient_temperature') | float(0) %}
-          {% set x = states('sensor.openweathermap_temperature') | float(0) %}
-          {% set x1 = states('input_number.wpw_curve_amb1') | float(0) %}
-          {% set x2 = states('input_number.wpw_curve_amb2') | float(0) %}
-          {% set x3 = states('input_number.wpw_curve_amb3') | float(0) %}
-          {% set x4 = states('input_number.wpw_curve_amb4') | float(0) %}
-          {% set y1 = states('input_number.wpw_curve_temp1') | float(0) %}
-          {% set y2 = states('input_number.wpw_curve_temp2') | float(0) %}
-          {% set y3 = states('input_number.wpw_curve_temp3') | float(0) %}
-          {% set y4 = states('input_number.wpw_curve_temp4') | float(0) %}
-          {% if x <= x2 %}
-            {% set val = y1 + (x - x1) * ((y2 - y1) / (x2 - x1)) if (x2 - x1) != 0 else y1 %}
-          {% elif x <= x3 %}
-            {% set val = y2 + (x - x2) * ((y3 - y2) / (x3 - x2)) if (x3 - x2) != 0 else y2 %}
-          {% else %}
-            {% set val = y3 + (x - x3) * ((y4 - y3) / (x4 - x3)) if (x4 - x3) != 0 else y3 %}
-          {% endif %}
-          {{ ((val * 2) | round(0) / 2) | clamp(10, 55) }}
 
 input_number:
   wpw_curve_amb1:
@@ -160,6 +166,43 @@ automation:
           - input_number.wpw_curve_amb4
     action:
       - action: script.wpw_calc_engine
+
+  - id: wpw_dynamic_vl_temp_trigger
+    alias: "WPW: Dynamische Heizkurve stündlich anpassen"
+    description: "Passt den VL-Sollwert stündlich an, wenn nicht im ECO Modus und Abweichung > 0.5K"
+    trigger:
+      - platform: time_pattern
+        hours: "*"
+        minutes: 0
+        seconds: 0
+    condition:
+      # Bedingung 1: Fan Mode ist NICHT 1 (ECO)
+      - condition: template
+        value_template: "{{ states('sensor.wpw_p07_fan_mode') | int(0) != 1 }}"
+      # Bedingung 2: Dynamik-Schalter ist AN (Prüfe den Namen deines Booleans!)
+      - condition: state
+        entity_id: input_boolean.wpw_dynamic_vl_temp_mode
+        state: "on"
+      # Bedingung 3: Differenz ist größer als 0.5°C
+      - condition: template
+        value_template: >
+          {% set current = states('sensor.wpw_p01_heating_setp') | float(0) %}
+          {% set target = states('sensor.wpw_dynamic_vl_temperature') | float(0) %}
+          {{ (target - current) | abs > 0.5 }}
+      # Bedingung 4: Zielwert ist im sicheren Bereich
+      - condition: template
+        value_template: >
+          {% set target = states('sensor.wpw_dynamic_vl_temperature') | float(0) %}
+          {{ target >= 10 and target <= 55 }}
+    action:
+      # Erst den Wert in HA aktualisieren (für die Anzeige im Dashboard)
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.wpw_p01_heating_setp
+        data:
+          value: "{{ states('sensor.wpw_dynamic_vl_temperature') | float }}"
+      # Dann per Modbus an die Wärmepumpe senden
+      - action: script.wpw_write_wpw_p01_heating_setp
 
 script:
   wpw_calc_engine:
@@ -261,3 +304,13 @@ script:
             unit: 1,
             value: "{{ (states('input_number.wpw_curve_temp4') | float(0) * 2) | int }}",
           }
+
+  wpw_write_wpw_p01_heating_setp:
+    alias: "Write new target temp parameter wpw_p01_heating_setp"
+    sequence:
+      - action: modbus.write_register
+        data:
+          hub: wpw_modbus
+          slave: !secret wpw_modbus_slave
+          address: 204 # 0xCC
+          value: "{{ (states('sensor.wpw_dynamic_vl_temperature') | float * 2) | int }}"
